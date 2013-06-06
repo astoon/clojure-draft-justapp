@@ -1,0 +1,17 @@
+<form id="login-form" action="/loginform" method="POST">
+  <a id="dialog-close" class="close" href="#">&nbsp;</a>
+  <table width="94%">
+    <tr>
+      <td><label for="email">Email</label></td>
+      <td><input type="email" name="email" id="login-form-email" placeholder="Email" required /></td>
+    </tr>
+    <tr>
+      <td><label for="password">Password</label></td>
+      <td><input type="password" name="password" id="login-form-password" placeholder="Password" required /></td>
+    </tr>
+    <tr>
+      <td colspan="2"><input type="submit" id="login-form-submit" name="login" value="Login" /></td>
+    </tr>
+    <tr><td colspan="2" id="login-form-message" class="form-message"></td></tr>
+  </table>
+</form>

@@ -1,0 +1,11 @@
+/target
+/lib
+/classes
+/checkouts
+/pom.xml
+/.lein-*
+/.env
+*.jar
+*.class
+.DS_Store
+
