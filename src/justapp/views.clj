@@ -1,23 +1,43 @@
-(ns justapp.xhr
+(ns justapp.views
   (:require [monger.collection :as mc]
             [monger.query :as mq]
             [net.cgrand.enlive-html :as html]
-            [ring.util.response :refer [response
-                                        redirect]]
-            [justapp.util :refer [handle-input-body
-                                handle-input-param
-                                handle-param
-                                random-string
-                                cutoff]]
-            [justapp.auth :refer [create-asecret
-                                verify-credentials]]
-            [justapp.mail :refer [sendmail
-                                signup-mail]]]
-            justapp.action)
+            [ring.util.response :refer [response redirect]]
+            [justapp.util :as util]
+            [justapp.auth :as auth]
+            [justapp.mail :as mail])
   (:import org.bson.types.ObjectId
            java.util.Date))
 
-;;;;;;;;;; Authenticate
+(html/defsnippet frontpage-content
+  "frontpage.html" [:#content] [])
+
+(defn frontpage []
+  (layout/layout (frontpage-content)))
+
+(html/defsnippet signup-confirm-content
+  "signup_confirm.html"
+  [:form]
+  [email code]
+  [:#hidden-email] (html/set-attr :value email)
+  [:#hidden-code] (html/set-attr :value code))
+
+(defn signup-confirm
+  [{params :params}]
+  (let [email (:email params)
+        code (:code params)
+        p1 (:password params)
+        p2 (:confirm params)]
+    (if-let [x (mc/find-one-as-map "signup" {:email email})]
+      (if (= code (:code x))
+        (if (and (not (nil? p1)) (= p1 p2))
+          (do (mc/remove "signup" {:email email})
+              (auth/create-authenticated-user email p1)
+              (-> (redirect "/")
+                  (assoc :flash "Your account has been created.")))
+          (layout/layout (signup-confirm-content email code)))
+        (redirect "/"))
+      (redirect "/"))))
 
 (defn person-id
   [{session :session}]
@@ -38,6 +58,9 @@
      {:roles (:roles user)
       :title (user-title user)})))
 
+(html/deftemplate signup-form-content
+  "signup_form.html" [])
+
 (defn signup-form []
   (apply str (signup-form-content)))
 
@@ -45,9 +68,11 @@
   [email]
   (if (and (= 0 (.length (mc/find "users" {:email email})))
            (= 0 (.length (mc/find "signup" {:email email}))))
-    (let [code (random-string 16)]
+    (let [code (util/random-string 16)]
       (mc/insert "signup" {:_id (ObjectId.) :email email :code code})
-      (sendmail email "Registration on Justapp" (signup-mail email code))
+      (mail/sendmail email
+                     "Registration on Justapp"
+                     (mail/signup-mail email code))
       (response {:success true}))
     (response {:success false})))
 
@@ -59,9 +84,8 @@
 
 (defn login-post
   [{params :params session :session}]
-  (if-let [userid (verify-credentials (:email params) (:password params))]
-    (do (pull-session userid (:userid session) "end")
-        (assoc-in (response {:success true}) [:session :userid] userid))
+  (if-let [userid (auth/verify-credentials (:email params) (:password params))]
+    (assoc-in (response {:success true}) [:session :userid] userid)
     (response {:success false})))
 
 (defn logout []
@@ -70,8 +94,6 @@
 (defn make-project
   [{params :params session :session}]
   (response {:entry-id (:id params) :create (:create params)}))
-
-;;;;;;;;;; Profile
 
 (html/deftemplate profile-form-content "profile.html"
   [firstname lastname]

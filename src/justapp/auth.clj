@@ -48,7 +48,4 @@
     (if-let [user (get-user (:userid (:session req)))]
       (-> (assoc req :user user)
           (app)
-          (update-session req))
-      (if (= (:uri req) "/")
-        (create-user-anonymous app req)
-        (app req)))))
+          (update-session req)))))
