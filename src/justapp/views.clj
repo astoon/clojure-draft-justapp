@@ -8,6 +8,8 @@
   (:import org.bson.types.ObjectId
            java.util.Date))
 
+;; Layout
+
 (html/defsnippet topbar-authenticated
   "layout.html" [:#topbar-authenticated]
   [user]
@@ -29,20 +31,14 @@
   [:#main] (html/content content)
   [:#topbar] (html/content (topbar req)))
 
-(html/defsnippet frontpage-template
-  "frontpage.html" [:article] [])
-
-(defn frontpage
-  [req]
-  (layout req (frontpage-template)))
-
 ;; Sign Up
 
-(html/deftemplate signup-form-template
-  "signup_form.html" [])
+(html/defsnippet signup-form-template
+  "layout.html" [:#signup-form] [])
 
-(defn signup-form []
-  (apply str (signup-form-template)))
+(defn signup-form
+  [req]
+  (layout req (signup-form-template)))
 
 (defn signup-post
   [email]
@@ -80,25 +76,6 @@
         (redirect "/"))
       (redirect "/"))))
 
-(defn person-id
-  [{session :session}]
-  (response {:id (:userid session)}))
-
-(defn- user-title
-  [user]
-  (let [f (:firstname user)
-        l (:lastname user)]
-    (if (and f l)
-      (str f " " l)
-      (:email user))))
-
-(defn person
-  [req]
-  (let [user (:user req)]
-    (response
-     {:roles (:roles user)
-      :title (user-title user)})))
-
 (html/deftemplate login-form-template
   "loginform.html" [])
 
@@ -107,7 +84,7 @@
 
 (defn login-post
   [{params :params session :session}]
-  (if-let [userid (auth/verify-credentials (:email params) (:password params))]
+  (if-let [userid (auth/authenticate (:email params) (:password params))]
     (assoc-in (response {:success true}) [:session :userid] userid)
     (response {:success false})))
 
@@ -131,3 +108,10 @@
                    {"$set" {:firstname (:firstname params)
                             :lastname (:lastname params)}})
   {:status 204})
+
+(html/defsnippet frontpage-template
+  "frontpage.html" [:article] [])
+
+(defn frontpage
+  [req]
+  (layout req (frontpage-template)))

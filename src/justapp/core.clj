@@ -17,7 +17,7 @@
 (defroutes routes
   (GET "/" req (views/frontpage req))
 
-  ;(GET "/signup" req (views/signup-form req))
+  (GET "/signup" req (views/signup-form req))
   ;(POST "/signup" [email] (views/signup-post email))
   ;(ANY "/signup-confirm" req (views/signup-confirm req))
 

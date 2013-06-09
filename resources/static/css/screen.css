@@ -1,2 +1,31 @@
 /* screen.css */
 
+body {
+    font-family: sans-serif;
+    background: #eee8d5;
+    color: #586e75;
+    line-height: 20px;
+    margin: 0;
+    padding: 100px;
+}
+
+a {
+    text-decoration: none;
+    color: #268bd2;
+}
+
+a:hover {
+    color: #cb4b16;
+}
+
+input {
+    border: 1px solid #586e75;
+}
+
+#main {
+    margin: 50px 0;
+}
+footer {
+    border-top: 1px solid #839496;
+    font-size: 80%;
+}
