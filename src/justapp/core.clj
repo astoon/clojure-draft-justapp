@@ -15,9 +15,9 @@
             [justapp.auth :as auth]))
 
 (defroutes routes
-  (GET "/" [] (views/frontpage))
+  (GET "/" req (views/frontpage req))
 
-  ;(GET "/signup" [] (views/signup-form))
+  ;(GET "/signup" req (views/signup-form req))
   ;(POST "/signup" [email] (views/signup-post email))
   ;(ANY "/signup-confirm" req (views/signup-confirm req))
 
@@ -30,7 +30,7 @@
 
   ;(GET "/_dummy" [] {:headers {"Content-Type" "text/javascript"}})
   (files "/static" {:root "resources/static"})
-  (not-found (views/layout "So bad:(")))
+  (not-found (views/layout nil "So bad:(")))
 
 (def app
   (-> #'routes

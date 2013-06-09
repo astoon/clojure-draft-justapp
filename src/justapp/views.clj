@@ -1,6 +1,5 @@
 (ns justapp.views
   (:require [monger.collection :as mc]
-            [monger.query :as mq]
             [net.cgrand.enlive-html :as html]
             [ring.util.response :refer [response redirect]]
             [justapp.util :as util]
@@ -9,17 +8,53 @@
   (:import org.bson.types.ObjectId
            java.util.Date))
 
+(html/defsnippet topbar-authenticated
+  "layout.html" [:#topbar-authenticated]
+  [user]
+  [:#user-profile] (html/content (auth/user-title user)))
+
+(html/defsnippet topbar-anonymous
+  "layout.html" [:#topbar-anonymous] [])
+
+(defn- topbar
+  [req]
+  (if-let [user (:user req)]
+    (topbar-authenticated user)
+    (topbar-anonymous)))
+
 (html/deftemplate layout "layout.html"
-  [c]
-  [:#main] (html/content c)
+  [req content]
   [:script] (fn [el] (update-in el [:attrs :src] #(str "/" %)))
-  [:link] (fn [el] (update-in el [:attrs :href] #(str "/" %))))
+  [:link] (fn [el] (update-in el [:attrs :href] #(str "/" %)))
+  [:#main] (html/content content)
+  [:#topbar] (html/content (topbar req)))
 
 (html/defsnippet frontpage-template
-  "frontpage.html" [:#content] [])
+  "frontpage.html" [:article] [])
 
-(defn frontpage []
-  (layout (frontpage-template)))
+(defn frontpage
+  [req]
+  (layout req (frontpage-template)))
+
+;; Sign Up
+
+(html/deftemplate signup-form-template
+  "signup_form.html" [])
+
+(defn signup-form []
+  (apply str (signup-form-template)))
+
+(defn signup-post
+  [email]
+  (if (and (= 0 (.length (mc/find "users" {:email email})))
+           (= 0 (.length (mc/find "signup" {:email email}))))
+    (let [code (util/random-string 16)]
+      (mc/insert "signup" {:_id (ObjectId.) :email email :code code})
+      (mail/sendmail email
+                     "Registration on Justapp"
+                     (mail/signup-mail email code))
+      (response {:success true}))
+    (response {:success false})))
 
 (html/defsnippet signup-confirm-template
   "signup_confirm.html"
@@ -63,24 +98,6 @@
     (response
      {:roles (:roles user)
       :title (user-title user)})))
-
-(html/deftemplate signup-form-template
-  "signup_form.html" [])
-
-(defn signup-form []
-  (apply str (signup-form-template)))
-
-(defn signup-post
-  [email]
-  (if (and (= 0 (.length (mc/find "users" {:email email})))
-           (= 0 (.length (mc/find "signup" {:email email}))))
-    (let [code (util/random-string 16)]
-      (mc/insert "signup" {:_id (ObjectId.) :email email :code code})
-      (mail/sendmail email
-                     "Registration on Justapp"
-                     (mail/signup-mail email code))
-      (response {:success true}))
-    (response {:success false})))
 
 (html/deftemplate login-form-template
   "loginform.html" [])

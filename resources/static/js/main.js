@@ -1,3 +1,1 @@
-(function (justapp) {
-
-}(justapp));
+/* main.js */

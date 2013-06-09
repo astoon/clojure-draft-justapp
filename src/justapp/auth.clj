@@ -5,45 +5,43 @@
   (:import org.bson.types.ObjectId
            org.mindrot.jbcrypt.BCrypt))
 
+(defrecord User [email password
+                 firstname lastname
+                 roles])
+
 (defn create-user
-  [email password & [:keys [roles] :or {roles #{::member}}]]
+  [email password & {:keys [firstname lastname roles]}]
   (mc/insert "users"
              {:_id (ObjectId.)
               :email email
               :password (BCrypt/hashpw password (BCrypt/gensalt))
-              :roles roles}))
+              :firstname (or firstname "")
+              :lastname (or lastname "")
+              :roles (or roles #{::member})}))
 
-(defn find-user-by-id
-  [id]
-  (and id (mc/find-map-by-id "users" (ObjectId. id))))
-
-(defn find-user-by-email
+(defn find-user
   [email]
-  (mc/find-one-as-map "users" {:email email}))
-
-(defn drop-user
-  [userid]
-  (mc/remove-by-id "users" (ObjectId. userid)))
+  (if-let [u (mc/find-one-as-map "users" {:email email})]
+    (map->User u)))
 
 (defn wrap-authentication
   [app]
   (fn [req]
-    (if-let [user (find-user-by-id (:userid (:session req)))]
+    (if-let [user (find-user (:userid (:session req)))]
       (-> (assoc req :user user)
           (app)
           (assoc :session (:session req)))
       (app req))))
 
-(defn save-credentials
-  [userid email password roles]
-  (mc/update-by-id "users"
-                   (ObjectId. userid)
-                   {"$set" {:email email
-                            :password (BCrypt/hashpw password (BCrypt/gensalt))
-                            :roles roles}}))
-
-(defn verify-credentials
+(defn authenticate
   [email password]
-  (if-let [user (find-user-by-email email)]
+  (if-let [user (find-user email)]
     (when (BCrypt/checkpw password (:password user))
-      user))))
+      user)))
+
+(defn user-title
+  [user]
+  (let [name (str (:firstname user) " " (:lastname user))]
+    (if (empty? (clojure.string/trim name))
+      (:email user)
+      name)))
