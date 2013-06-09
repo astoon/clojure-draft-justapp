@@ -9,40 +9,39 @@
             [compojure.handler :refer [site]]
             [monger.core :refer [connect-via-uri!]]
             [monger.ring.session-store :refer [monger-store]]
-            [justapp.cfg :refer [cfg]]
-            [justapp.util :refer [wrap-utf8 wrap-debug]]
-            [justapp.layout :refer [layout]]
+            [justapp.cfg :as cfg]
+            [justapp.util :as util]
             [justapp.views :as views]
-            [justapp.auth :refer [wrap-authentication]]))
+            [justapp.auth :as auth]))
 
 (defroutes routes
   (GET "/" [] (views/frontpage))
 
-  (GET "/signup" [] (views/signup-form))
-  (POST "/signup" [email] (views/signup-post email))
-  (ANY "/signup-confirm" req (views/signup-confirm req))
+  ;(GET "/signup" [] (views/signup-form))
+  ;(POST "/signup" [email] (views/signup-post email))
+  ;(ANY "/signup-confirm" req (views/signup-confirm req))
 
-  (GET "/loginform" [] (views/login-form))
-  (POST "/loginform" req (views/login-post req))
-  (GET "/logout" [] (views/logout))
+  ;(GET "/loginform" [] (views/login-form))
+  ;(POST "/loginform" req (views/login-post req))
+  ;(GET "/logout" [] (views/logout))
 
-  (GET "/profile" req (views/profile-form req))
-  (POST "/profile" req (views/profile-post req))
+  ;(GET "/profile" req (views/profile-form req))
+  ;(POST "/profile" req (views/profile-post req))
 
-  (GET "/_dummy" [] {:headers {"Content-Type" "text/javascript"}})
+  ;(GET "/_dummy" [] {:headers {"Content-Type" "text/javascript"}})
   (files "/static" {:root "resources/static"})
-  (not-found (layout "So bad:(")))
+  (not-found (views/layout "So bad:(")))
 
 (def app
   (-> #'routes
-      wrap-authentication
+      auth/wrap-authentication
       wrap-json-response
-      wrap-utf8
+      util/wrap-utf8
       (site {:session {:store (monger-store)
                        :cookie-name "SID"
                        :cookie-attrs {:expires "Mon, 13-Apr-2020 12:00:00 GMT"}}})))
 
-(connect-via-uri! (:mongodb-uri cfg))
+(connect-via-uri! (:mongodb-uri cfg/cfg))
 
 (defn start
   [& {:keys [port join?]

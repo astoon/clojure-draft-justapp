@@ -19,7 +19,7 @@
 (defn- signup-confirm-link [addr code]
   (str (:root-url cfg) "/signup-confirm?email=" addr "&code=" code))
 
-(html/deftemplate signup-mail*
+(html/deftemplate signup-mail-template
   "mail/signup.html"
   [addr code]
   [:#link] (html/set-attr :href (signup-confirm-link addr code))
@@ -28,4 +28,4 @@
 
 (defn signup-mail
   [addr code]
-  (apply str (signup-mail* addr code)))
+  (apply str (signup-mail-template addr code)))

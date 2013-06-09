@@ -9,13 +9,19 @@
   (:import org.bson.types.ObjectId
            java.util.Date))
 
-(html/defsnippet frontpage-content
+(html/deftemplate layout "layout.html"
+  [c]
+  [:#main] (html/content c)
+  [:script] (fn [el] (update-in el [:attrs :src] #(str "/" %)))
+  [:link] (fn [el] (update-in el [:attrs :href] #(str "/" %))))
+
+(html/defsnippet frontpage-template
   "frontpage.html" [:#content] [])
 
 (defn frontpage []
-  (layout/layout (frontpage-content)))
+  (layout (frontpage-template)))
 
-(html/defsnippet signup-confirm-content
+(html/defsnippet signup-confirm-template
   "signup_confirm.html"
   [:form]
   [email code]
@@ -32,10 +38,10 @@
       (if (= code (:code x))
         (if (and (not (nil? p1)) (= p1 p2))
           (do (mc/remove "signup" {:email email})
-              (auth/create-authenticated-user email p1)
+              (auth/create-user email p1)
               (-> (redirect "/")
                   (assoc :flash "Your account has been created.")))
-          (layout/layout (signup-confirm-content email code)))
+          (layout (signup-confirm-template email code)))
         (redirect "/"))
       (redirect "/"))))
 
@@ -58,11 +64,11 @@
      {:roles (:roles user)
       :title (user-title user)})))
 
-(html/deftemplate signup-form-content
+(html/deftemplate signup-form-template
   "signup_form.html" [])
 
 (defn signup-form []
-  (apply str (signup-form-content)))
+  (apply str (signup-form-template)))
 
 (defn signup-post
   [email]
@@ -76,11 +82,11 @@
       (response {:success true}))
     (response {:success false})))
 
-(html/deftemplate login-form-content
+(html/deftemplate login-form-template
   "loginform.html" [])
 
 (defn login-form []
-  (apply str (login-form-content)))
+  (apply str (login-form-template)))
 
 (defn login-post
   [{params :params session :session}]
@@ -91,19 +97,15 @@
 (defn logout []
   (assoc (redirect "/") :session nil))
 
-(defn make-project
-  [{params :params session :session}]
-  (response {:entry-id (:id params) :create (:create params)}))
-
-(html/deftemplate profile-form-content "profile.html"
+(html/deftemplate profile-form-template "profile.html"
   [firstname lastname]
   [:#profile-firstname] (html/set-attr :value firstname)
   [:#profile-lastname] (html/set-attr :value lastname))
 
 (defn profile-form
   [{user :user}]
-  (apply str (profile-form-content (:firstname user)
-                                   (:lastname user))))
+  (apply str (profile-form-template (:firstname user)
+                                    (:lastname user))))
 
 (defn profile-post
   [{params :params user :user}]
