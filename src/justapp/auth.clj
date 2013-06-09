@@ -6,47 +6,44 @@
            org.mindrot.jbcrypt.BCrypt))
 
 (defn create-user
-  [email password]
+  [email password & [:keys [roles] :or {roles #{::member}}]]
   (mc/insert "users"
              {:_id (ObjectId.)
               :email email
               :password (BCrypt/hashpw password (BCrypt/gensalt))
-              :roles #{::member}}))
+              :roles roles}))
 
-(defn get-user [id]
+(defn find-user-by-id
+  [id]
   (and id (mc/find-map-by-id "users" (ObjectId. id))))
+
+(defn find-user-by-email
+  [email]
+  (mc/find-one-as-map "users" {:email email}))
 
 (defn drop-user
   [userid]
-  (mc/remove "sessions" {:data {:userid userid}})
   (mc/remove-by-id "users" (ObjectId. userid)))
 
+(defn wrap-authentication
+  [app]
+  (fn [req]
+    (if-let [user (find-user-by-id (:userid (:session req)))]
+      (-> (assoc req :user user)
+          (app)
+          (assoc :session (:session req)))
+      (app req))))
+
 (defn save-credentials
-  [id email password roles]
+  [userid email password roles]
   (mc/update-by-id "users"
-                   (ObjectId. id)
+                   (ObjectId. userid)
                    {"$set" {:email email
                             :password (BCrypt/hashpw password (BCrypt/gensalt))
                             :roles roles}}))
 
 (defn verify-credentials
   [email password]
-  (if-let [user (mc/find-one-as-map "users" {:email email})]
-    (if (BCrypt/checkpw password (:password user))
-      (.toString (:_id user)))))
-
-(defn- update-session
-  [resp req]
-  (if (and (= (:uri req) "/")
-           (not (:userid (:session resp))))
-    (assoc resp :session (:session req))
-    resp))
-
-(defn wrap-authentication
-  [app]
-  (fn [req]
-    (if-let [user (get-user (:userid (:session req)))]
-      (-> (assoc req :user user)
-          (app)
-          (assoc :session (:session req)))
-      (app req))))
+  (if-let [user (find-user-by-email email)]
+    (when (BCrypt/checkpw password (:password user))
+      user))))
