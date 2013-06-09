@@ -3,35 +3,37 @@
   <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="static/css/screen.css" />
-    <title>Example Site</title>
+    <title>example</title>
   </head>
   <body>
     <header>
-      <h1><a href="/">Example Site</a></h1>
+      <h1><a href="/">example</a></h1>
     </header>
 
     <div id="topbar">
       <div id="topbar-authenticated">
-	<a href="/profile" id="user-profile">John Smith</a>
-	<a href="/logout">Logout</a>
+	<a href="/profile" id="user-profile">Frodo</a>
+	&nbsp;|&nbsp;
+	<a href="/logout">logout</a>
       </div>
       <div id="topbar-anonymous">
-	<a href="/signup">Sign Up</a>
-	<a href="/login">Login</a>
+	<a href="/signup">sign up</a>
+	&nbsp;|&nbsp;
+	<a href="/login">login</a>
       </div>
     </div>
 
     <div id="main">
 
       <form id="signup-form" action="." method="POST">
-	<input type="email" name="email" placeholder="Email" required />
-	<input type="submit" name="submit" value="Sign Up" id="submit" />
+	<input type="email" name="email" placeholder="email" required />
+	<input type="submit" name="submit" value="sign up" id="submit" />
       </form>
 
     </div>
 
     <footer>
-      footer
+      <a href="http://github.com/astoon" target="_blank">Ilshad Khabibullin</a>
     </footer>
     <script type="text/javascript" src="static/js/main.js"></script>
   </body>

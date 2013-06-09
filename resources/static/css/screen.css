@@ -2,11 +2,11 @@
 
 body {
     font-family: sans-serif;
-    background: #eee8d5;
+    background: #fdf6e3;
     color: #586e75;
     line-height: 20px;
     margin: 0;
-    padding: 100px;
+    padding: 50px;
 }
 
 a {
@@ -23,9 +23,11 @@ input {
 }
 
 #main {
-    margin: 50px 0;
+    margin: 10px 0;
+    background: #eee8d5;
+    padding: 10px;
 }
+
 footer {
-    border-top: 1px solid #839496;
     font-size: 80%;
 }
