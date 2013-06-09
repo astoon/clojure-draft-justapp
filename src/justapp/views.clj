@@ -3,33 +3,33 @@
             [net.cgrand.enlive-html :as html]
             [ring.util.response :refer [response redirect]]
             [justapp.util :as util]
-            [justapp.auth :as auth]
-            [justapp.mail :as mail])
+            [justapp.auth :as auth])
   (:import org.bson.types.ObjectId
            java.util.Date))
 
 ;; Layout
 
-(html/defsnippet topbar-authenticated
-  "layout.html" [:#topbar-authenticated]
+(html/defsnippet menu-authenticated
+  "layout.html" [:#menu-authenticated]
   [user]
   [:#user-profile] (html/content (auth/user-title user)))
 
-(html/defsnippet topbar-anonymous
-  "layout.html" [:#topbar-anonymous] [])
+(html/defsnippet menu-anonymous
+  "layout.html" [:#menu-anonymous] [])
 
-(defn- topbar
+(defn- menu
   [req]
   (if-let [user (:user req)]
-    (topbar-authenticated user)
-    (topbar-anonymous)))
+    (menu-authenticated user)
+    (menu-anonymous)))
 
 (html/deftemplate layout "layout.html"
   [req content]
-  [:script] (fn [el] (update-in el [:attrs :src] #(str "/" %)))
-  [:link] (fn [el] (update-in el [:attrs :href] #(str "/" %)))
+  [:#menu] (html/content (menu req))
+  [:#flash] (html/content (:flash req))
   [:#main] (html/content content)
-  [:#topbar] (html/content (topbar req)))
+  [:script] (fn [el] (update-in el [:attrs :src] #(str "/" %)))
+  [:link] (fn [el] (update-in el [:attrs :href] #(str "/" %))))
 
 ;; Sign Up
 
@@ -42,15 +42,14 @@
 
 (defn signup-post
   [email]
-  (if (and (= 0 (.length (mc/find "users" {:email email})))
-           (= 0 (.length (mc/find "signup" {:email email}))))
-    (let [code (util/random-string 16)]
-      (mc/insert "signup" {:_id (ObjectId.) :email email :code code})
-      (mail/sendmail email
-                     "Registration on Justapp"
-                     (mail/signup-mail email code))
-      (response {:success true}))
-    (response {:success false})))
+  (if (and (not (auth/find-user email))
+           (not (auth/signup-exists? email)))
+    (do (auth/signup-start email)
+        (-> (redirect "/")
+            (assoc :flash "We've sent you a confirmation code!
+                           Please check your email.")))
+    (-> (response "")
+        (assoc :flash "This address is already exist."))))
 
 (html/defsnippet signup-confirm-template
   "signup_confirm.html"

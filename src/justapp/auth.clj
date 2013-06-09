@@ -1,7 +1,8 @@
 (ns justapp.auth
   (:require [monger.collection :as mc]
             [ring.util.response :refer [response]]
-            [justapp.util :as util])
+            [justapp.util :as util]
+            [justapp.mail :as mail])
   (:import org.bson.types.ObjectId
            org.mindrot.jbcrypt.BCrypt))
 
@@ -45,3 +46,20 @@
     (if (empty? (clojure.string/trim name))
       (:email user)
       name)))
+
+(defn signup-start
+  [email]
+  (let [code (util/random-string 16)]
+    (mc/insert "signup" {:_id (ObjectId.)
+                         :email email
+                         :code code})
+    (mail/sendmail email
+                   "Registration on Justapp"
+                   (mail/signup-mail email code))))
+
+(defn signup-exists?
+  [email]
+  (mc/find-one-as-map "signup" {:email email}))
+
+(defn signup-end
+  [email code])

@@ -3,7 +3,6 @@
             [ring.middleware.json :refer [wrap-json-response]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
-            [ring.middleware.flash :refer [wrap-flash]]
             [compojure.core :refer [defroutes ANY GET POST DELETE PUT]]
             [compojure.route :refer [files not-found]]
             [compojure.handler :refer [site]]
@@ -18,7 +17,7 @@
   (GET "/" req (views/frontpage req))
 
   (GET "/signup" req (views/signup-form req))
-  ;(POST "/signup" [email] (views/signup-post email))
+  (POST "/signup" [email] (views/signup-post email))
   ;(ANY "/signup-confirm" req (views/signup-confirm req))
 
   ;(GET "/loginform" [] (views/login-form))
