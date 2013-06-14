@@ -20,4 +20,8 @@
          :port 7777
          :nrepl {:start? true :port 77777}}
   :env {:env-root-url "http://localhost:7777"
-        :env-mongodb-uri "mongodb://localhost/justapp"})
+        :env-mongodb-uri "mongodb://localhost/justapp"
+        :smtp-addr-from "xxx@xxx.com"
+        :smpt-name-from "XXX"
+        :smpt-username "xxx"
+        :smtp-password "xxx"})

@@ -7,37 +7,41 @@
   </head>
   <body>
 
-    <header>
-      <h1><a href="/">example</a></h1>
-    </header>
+    <div id="container">
 
-    <div id="menu">
-      <div id="menu-authenticated">
-	<a href="/profile" id="user-profile">Frodo</a>
-	&nbsp; | &nbsp;
-	<a href="/logout">logout</a>
+      <header>
+	<h1><a href="/">example</a></h1>
+      </header>
+      
+      <div id="menu">
+	<div id="menu-authenticated">
+	  <a href="/profile" id="user-profile">Frodo</a>
+	  &nbsp; | &nbsp;
+	  <a href="/logout">logout</a>
+	</div>
+	<div id="menu-anonymous">
+	  <a href="/signup">sign up</a>
+	  &nbsp; | &nbsp;
+	  <a href="/login">login</a>
+	</div>
       </div>
-      <div id="menu-anonymous">
-	<a href="/signup">sign up</a>
-	&nbsp; | &nbsp;
-	<a href="/login">login</a>
+      
+      <div id="flash"></div>
+      
+      <div id="main">
+	
+	<form id="signup-form" action="/signup" method="POST">
+	  <input type="email" name="email" placeholder="email" required />
+	  <input type="submit" name="submit" value="sign up" id="submit" />
+	</form>
+	
       </div>
+      
+      <footer>
+	<a href="http://github.com/astoon" target="_blank">Ilshad Khabibullin</a>
+      </footer>
+      
     </div>
-
-    <div id="flash"></div>
-
-    <div id="main">
-
-      <form id="signup-form" action="/signup" method="POST">
-	<input type="email" name="email" placeholder="email" required />
-	<input type="submit" name="submit" value="sign up" id="submit" />
-      </form>
-
-    </div>
-
-    <footer>
-      <a href="http://github.com/astoon" target="_blank">Ilshad Khabibullin</a>
-    </footer>
 
     <script type="text/javascript" src="static/js/main.js"></script>
 

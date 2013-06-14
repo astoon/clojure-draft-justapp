@@ -5,7 +5,7 @@ body {
     color: #586e75;
     line-height: 20px;
     margin: 0;
-    padding: 50px;
+    padding: 0;
 }
 
 a {
@@ -19,6 +19,16 @@ a:hover {
 
 input {
     border: 1px solid #586e75;
+}
+
+#container {
+    width: 768px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header {
+    padding-top: 10px;
 }
 
 #flash, #main {

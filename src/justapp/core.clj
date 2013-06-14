@@ -8,28 +8,28 @@
             [compojure.handler :refer [site]]
             [monger.core :refer [connect-via-uri!]]
             [monger.ring.session-store :refer [monger-store]]
-            [justapp.cfg :as cfg]
+            [justapp.config :as config]
             [justapp.util :as util]
-            [justapp.views :as views]
+            [justapp.handlers :as handlers]
             [justapp.auth :as auth]))
 
 (defroutes routes
-  (GET "/" req (views/frontpage req))
+  (GET "/" req (handlers/frontpage req))
 
-  (GET "/signup" req (views/signup-form req))
-  (POST "/signup" [email] (views/signup-post email))
-  ;(ANY "/signup-confirm" req (views/signup-confirm req))
+  (GET "/signup" req (handlers/signup-form req))
+  (POST "/signup" [email] (handlers/signup-post email))
+  ;(ANY "/signup-confirm" req (handlers/signup-confirm req))
 
-  ;(GET "/loginform" [] (views/login-form))
-  ;(POST "/loginform" req (views/login-post req))
-  ;(GET "/logout" [] (views/logout))
+  ;(GET "/loginform" [] (handlers/login-form))
+  ;(POST "/loginform" req (handlers/login-post req))
+  ;(GET "/logout" [] (handlers/logout))
 
-  ;(GET "/profile" req (views/profile-form req))
-  ;(POST "/profile" req (views/profile-post req))
+  ;(GET "/profile" req (handlers/profile-form req))
+  ;(POST "/profile" req (handlers/profile-post req))
 
   ;(GET "/_dummy" [] {:headers {"Content-Type" "text/javascript"}})
   (files "/static" {:root "resources/static"})
-  (not-found (views/layout nil "So bad:(")))
+  (not-found (handlers/layout nil "So bad:(")))
 
 (def app
   (-> #'routes
@@ -40,7 +40,7 @@
                        :cookie-name "SID"
                        :cookie-attrs {:expires "Mon, 13-Apr-2020 12:00:00 GMT"}}})))
 
-(connect-via-uri! (:mongodb-uri cfg/cfg))
+(connect-via-uri! (:mongodb-uri config/config))
 
 (defn start
   [& {:keys [port join?]

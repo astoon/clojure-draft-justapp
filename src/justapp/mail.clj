@@ -1,6 +1,6 @@
 (ns justapp.mail
   (:require [net.cgrand.enlive-html :as html]
-            [justapp.cfg :refer [cfg]])
+            [justapp.config :refer [config]])
   (:import org.apache.commons.mail.HtmlEmail))
 
 (defn sendmail
@@ -10,14 +10,14 @@
     (.setSslSmtpPort "587")
     (.setTLS true)
     (.addTo address)
-    (.setFrom "xxx@xxx.com" "Justapp")
+    (.setFrom (:smtp-addr-from config) (:smtp-name-from config))
     (.setSubject subject)
     (.setHtmlMsg content)
-    (.setAuthentication "xxx@xxx.com" "xxx")
+    (.setAuthentication (:smtp-username config) (:smpt-password config))
     (.send)))
 
 (defn- signup-confirm-link [addr code]
-  (str (:root-url cfg) "/signup-confirm?email=" addr "&code=" code))
+  (str (:root-url config) "/signup-confirm?email=" addr "&code=" code))
 
 (html/deftemplate signup-mail-template
   "mail/signup.html"
