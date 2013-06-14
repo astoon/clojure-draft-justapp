@@ -14,18 +14,18 @@
             [justapp.auth :as auth]))
 
 (defroutes routes
-  (GET "/" req (handlers/frontpage req))
+  (GET "/" request (handlers/frontpage request))
 
-  (GET "/signup" req (handlers/signup-form req))
+  (GET "/signup" request (handlers/signup-form request))
   (POST "/signup" [email] (handlers/signup-post email))
-  ;(ANY "/signup-confirm" req (handlers/signup-confirm req))
+  ;(ANY "/signup-confirm" request (handlers/signup-confirm request))
 
   ;(GET "/loginform" [] (handlers/login-form))
-  ;(POST "/loginform" req (handlers/login-post req))
+  ;(POST "/loginform" request (handlers/login-post request))
   ;(GET "/logout" [] (handlers/logout))
 
-  ;(GET "/profile" req (handlers/profile-form req))
-  ;(POST "/profile" req (handlers/profile-post req))
+  ;(GET "/profile" request (handlers/profile-form request))
+  ;(POST "/profile" request (handlers/profile-post request))
 
   ;(GET "/_dummy" [] {:headers {"Content-Type" "text/javascript"}})
   (files "/static" {:root "resources/static"})

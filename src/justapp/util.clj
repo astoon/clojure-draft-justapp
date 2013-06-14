@@ -4,8 +4,8 @@
 
 (defn wrap-utf8
   [app]
-  (fn [req]
-    (charset (app req) "utf-8")))
+  (fn [request]
+    (charset (app request) "utf-8")))
 
 (defn- maybe-nil [v]
   (if (or (= v "null") (= v "")) nil v))

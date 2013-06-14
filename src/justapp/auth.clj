@@ -26,13 +26,13 @@
     (map->User u)))
 
 (defn wrap-authentication
-  [app]
-  (fn [req]
-    (if-let [user (find-user (:userid (:session req)))]
-      (-> (assoc req :user user)
-          (app)
-          (assoc :session (:session req)))
-      (app req))))
+  [handler]
+  (fn [request]
+    (if-let [user (find-user (:userid (:session request)))]
+      (-> (assoc request :user user)
+          (handler)
+          (assoc :session (:session request)))
+      (handler request))))
 
 (defn authenticate
   [email password]

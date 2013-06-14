@@ -1,4 +1,4 @@
-(ns justapp.views
+(ns justapp.handlers
   (:require [monger.collection :as mc]
             [net.cgrand.enlive-html :as html]
             [ring.util.response :refer [response redirect]]
@@ -18,15 +18,15 @@
   "layout.html" [:#menu-anonymous] [])
 
 (defn- menu
-  [req]
-  (if-let [user (:user req)]
+  [request]
+  (if-let [user (:user request)]
     (menu-authenticated user)
     (menu-anonymous)))
 
 (html/deftemplate layout "layout.html"
-  [req content]
-  [:#menu] (html/content (menu req))
-  [:#flash] (html/content (:flash req))
+  [request content]
+  [:#menu] (html/content (menu request))
+  [:#flash] (html/content (:flash request))
   [:#main] (html/content content)
   [:script] (fn [el] (update-in el [:attrs :src] #(str "/" %)))
   [:link] (fn [el] (update-in el [:attrs :href] #(str "/" %))))
@@ -37,8 +37,8 @@
   "layout.html" [:#signup-form] [])
 
 (defn signup-form
-  [req]
-  (layout req (signup-form-template)))
+  [request]
+  (layout request (signup-form-template)))
 
 (defn signup-post
   [email]
@@ -49,7 +49,7 @@
             (assoc :flash "We've sent you a confirmation code!
                            Please check your email.")))
     (-> (response "")
-        (assoc :flash "This address is already exist."))))
+        (assoc :flash "This address is already used."))))
 
 (html/defsnippet signup-confirm-template
   "signup_confirm.html"
@@ -112,5 +112,5 @@
   "frontpage.html" [:article] [])
 
 (defn frontpage
-  [req]
-  (layout req (frontpage-template)))
+  [request]
+  (layout request (frontpage-template)))
