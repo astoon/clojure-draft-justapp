@@ -10,10 +10,10 @@
     (.setSslSmtpPort "587")
     (.setTLS true)
     (.addTo address)
-    (.setFrom "support@spacta.com" "Justapp")
+    (.setFrom "xxx@xxx.com" "Justapp")
     (.setSubject subject)
     (.setHtmlMsg content)
-    (.setAuthentication "support@spacta.com" "zEYFfvXdXPaGjir")
+    (.setAuthentication "xxx@xxx.com" "xxx")
     (.send)))
 
 (defn- signup-confirm-link [addr code]

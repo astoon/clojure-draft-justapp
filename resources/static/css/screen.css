@@ -2,7 +2,6 @@
 
 body {
     font-family: sans-serif;
-    background: #fdf6e3;
     color: #586e75;
     line-height: 20px;
     margin: 0;
@@ -21,9 +20,10 @@ a:hover {
 input {
     border: 1px solid #586e75;
 }
+
 #flash, #main {
     margin: 10px 0;
-    background: #eee8d5;
+    background-color: #eee;
     padding: 10px;
 }
 
