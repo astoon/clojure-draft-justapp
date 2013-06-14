@@ -1,4 +1,4 @@
-(ns justapp.config
+(ns justapp.cfg
   (:require [environ.core :refer [env]]))
 
 (def config {:root-url (env :env-root-url)

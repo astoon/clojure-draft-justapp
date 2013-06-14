@@ -31,10 +31,14 @@ header {
     padding-top: 10px;
 }
 
-#flash, #main {
+#flash {
     margin: 10px 0;
-    background-color: #eee;
-    padding: 10px;
+    color: orange;
+    font-weight: bold;
+}
+
+#main {
+    margin: 10px 0;
 }
 
 footer {

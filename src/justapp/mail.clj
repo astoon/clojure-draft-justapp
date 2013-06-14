@@ -1,6 +1,6 @@
 (ns justapp.mail
   (:require [net.cgrand.enlive-html :as html]
-            [justapp.config :refer [config]])
+            [justapp.cfg :refer [config]])
   (:import org.apache.commons.mail.HtmlEmail))
 
 (defn sendmail

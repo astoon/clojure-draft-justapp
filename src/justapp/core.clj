@@ -8,7 +8,7 @@
             [compojure.handler :refer [site]]
             [monger.core :refer [connect-via-uri!]]
             [monger.ring.session-store :refer [monger-store]]
-            [justapp.config :as config]
+            [justapp.cfg :refer [config]]
             [justapp.util :as util]
             [justapp.handlers :as handlers]
             [justapp.auth :as auth]))
@@ -40,7 +40,7 @@
                        :cookie-name "SID"
                        :cookie-attrs {:expires "Mon, 13-Apr-2020 12:00:00 GMT"}}})))
 
-(connect-via-uri! (:mongodb-uri config/config))
+(connect-via-uri! (:mongodb-uri config))
 
 (defn start
   [& {:keys [port join?]
