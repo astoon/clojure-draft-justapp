@@ -17,7 +17,7 @@
   (GET "/" request (handlers/frontpage request))
 
   (GET "/signup" request (handlers/signup-form request))
-  (POST "/signup" [email] (handlers/signup-post email))
+  (POST "/signup" request (handlers/signup-post request))
   ;(ANY "/signup-confirm" request (handlers/signup-confirm request))
 
   ;(GET "/loginform" [] (handlers/login-form))

@@ -27,12 +27,12 @@
 
 (defn wrap-authentication
   [handler]
-  (fn [request]
-    (if-let [user (find-user (:userid (:session request)))]
-      (-> (assoc request :user user)
-          (handler)
-          (assoc :session (:session request)))
-      (handler request))))
+  (fn [{:keys [session] :as request}]
+    (-> (if-let [user (find-user (:userid session))]
+          (assoc request :user user)
+          request)
+        handler
+        (assoc :session session))))
 
 (defn authenticate
   [email password]

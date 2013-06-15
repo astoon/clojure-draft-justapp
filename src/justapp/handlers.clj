@@ -2,10 +2,7 @@
   (:require [monger.collection :as mc]
             [net.cgrand.enlive-html :as html]
             [ring.util.response :refer [response redirect]]
-            [justapp.util :as util]
-            [justapp.auth :as auth])
-  (:import org.bson.types.ObjectId
-           java.util.Date))
+            [justapp.auth :as auth]))
 
 ;; Layout
 
@@ -41,15 +38,16 @@
   (layout request (signup-form-template)))
 
 (defn signup-post
-  [email]
-  (if (and (not (auth/find-user email))
-           (not (auth/signup-exists? email)))
-    (do (auth/signup-start email)
-        (-> (redirect "/")
-            (assoc :flash "We've sent you a confirmation code!
+  [request]
+  (let [email (:email (:params request))]
+    (if (and (not (auth/find-user email))
+             (not (auth/signup-exists? email)))
+      (do (auth/signup-start email)
+          (-> (redirect "/")
+              (assoc :flash "We've sent you a confirmation code!
                            Please check your email.")))
-    (-> (response "")
-        (assoc :flash "This address is already used."))))
+      (-> (redirect "/signup")
+          (assoc :flash "This address is already used.")))))
 
 (html/defsnippet signup-confirm-template
   "signup_confirm.html"
@@ -113,4 +111,5 @@
 
 (defn frontpage
   [request]
+  (println request)
   (layout request (frontpage-template)))
