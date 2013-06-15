@@ -2,13 +2,13 @@
   (:require [monger.collection :as mc]
             [net.cgrand.enlive-html :as html]
             [ring.util.response :refer [response redirect]]
-            [justapp.auth :as auth]))
+            [justapp.auth :as auth]
+            [justapp.cfg :refer [config]]))
 
 ;; Layout
 
 (html/defsnippet menu-authenticated
-  "layout.html" [:#menu-authenticated]
-  [user]
+  "layout.html" [:#menu-authenticated] [user]
   [:#user-profile] (html/content (auth/user-title user)))
 
 (html/defsnippet menu-anonymous
@@ -50,9 +50,7 @@
           (assoc :flash "This address is already used.")))))
 
 (html/defsnippet signup-confirm-template
-  "signup_confirm.html"
-  [:form]
-  [email code]
+  "signup_confirm.html" [:form] [email code]
   [:#hidden-email] (html/set-attr :value email)
   [:#hidden-code] (html/set-attr :value code))
 
@@ -111,5 +109,4 @@
 
 (defn frontpage
   [request]
-  (println request)
   (layout request (frontpage-template)))

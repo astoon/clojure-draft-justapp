@@ -10,10 +10,10 @@
     (.setSslSmtpPort "587")
     (.setTLS true)
     (.addTo address)
-    (.setFrom (:smtp-addr-from config) (:smtp-name-from config))
+    (.setFrom (:smtp-addrfrom config) (:smtp-namefrom config))
     (.setSubject subject)
     (.setHtmlMsg content)
-    (.setAuthentication (:smtp-username config) (:smpt-password config))
+    (.setAuthentication (:smtp-username config) (:smtp-password config))
     (.send)))
 
 (defn- signup-confirm-link [addr code]

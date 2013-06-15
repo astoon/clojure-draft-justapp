@@ -3,7 +3,7 @@
 
 (def config {:root-url (env :env-root-url)
              :mongodb-uri (env :env-mongodb-uri)
-             :smtp-addr-from (env :mail-addr-from)
-             :smtp-name-from (env :mail-name-from)
-             :smtp-username (env :mail-user)
-             :smtp-password (env :mail-password)})
+             :smtp-addrfrom (env :justapp-smtp-addrfrom)
+             :smtp-namefrom (env :justapp-smtp-namefrom)
+             :smtp-username (env :justapp-smtp-username)
+             :smtp-password (env :justapp-smtp-password)})

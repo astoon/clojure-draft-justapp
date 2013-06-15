@@ -21,7 +21,7 @@
          :nrepl {:start? true :port 77777}}
   :env {:env-root-url "http://localhost:7777"
         :env-mongodb-uri "mongodb://localhost/justapp"
-        :smtp-addr-from "xxx@xxx.com"
-        :smpt-name-from "XXX"
-        :smpt-username "xxx"
-        :smtp-password "xxx"})
+        :justapp-smtp-addrfrom "xxx@xxx.com"
+        :justapp-smtp-namefrom "XXX"
+        :justapp-smtp-username "xxx"
+        :justapp-smtp-password "xxx"})
