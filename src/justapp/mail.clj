@@ -7,7 +7,7 @@
   [address subject content]
   (doto (HtmlEmail.)
     (.setHostName "smtp.gmail.com")
-    (.setSslSmtpPort "587")
+    (.setSmtpPort 587)
     (.setTLS true)
     (.addTo address)
     (.setFrom (:smtp-addrfrom config) (:smtp-namefrom config))
