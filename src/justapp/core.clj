@@ -27,7 +27,6 @@
   ;(GET "/profile" request (handlers/profile-form request))
   ;(POST "/profile" request (handlers/profile-post request))
 
-  ;(GET "/_dummy" [] {:headers {"Content-Type" "text/javascript"}})
   (files "/static" {:root "resources/static"})
   (not-found (handlers/layout nil "So bad:(")))
 
