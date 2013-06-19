@@ -14,11 +14,11 @@
             [justapp.auth :as auth]))
 
 (defroutes routes
-  (GET "/" request (handlers/frontpage request))
+  (GET "/" request (handlers/landing-page request))
 
   (GET "/signup" request (handlers/signup-form request))
   (POST "/signup" request (handlers/signup-post request))
-  ;(ANY "/signup-confirm" request (handlers/signup-confirm request))
+  (ANY "/signup-confirm" request (handlers/signup-confirm request))
 
   ;(GET "/loginform" [] (handlers/login-form))
   ;(POST "/loginform" request (handlers/login-post request))

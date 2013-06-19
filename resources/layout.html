@@ -14,27 +14,57 @@
       </header>
       
       <div id="menu">
+
+	<!-- snippet -->
 	<div id="menu-authenticated">
 	  <a href="/profile" id="user-profile">Frodo</a>
 	  &nbsp; | &nbsp;
 	  <a href="/logout">logout</a>
 	</div>
+
+	<!-- snippet -->
 	<div id="menu-anonymous">
 	  <a href="/signup">sign up</a>
 	  &nbsp; | &nbsp;
 	  <a href="/login">login</a>
 	</div>
+
       </div>
       
       <div id="flash"></div>
       
       <div id="main">
 	
+	<!-- snippet -->
 	<form id="signup-form" action="/signup" method="POST">
 	  <input type="email" name="email" placeholder="email" required />
 	  <input type="submit" name="submit" value="sign up" id="submit" />
 	</form>
-	
+
+	<hr />
+
+	<!-- snippet -->
+	<form id="signup-confirm" action="/signup-confirm" method="POST">
+	  <div>
+	    <label for="password">Password</label>
+	    <input type="password" name="password" required />
+	  </div>
+	  <div>
+	    <label for="confirm">Confirm password</label>
+	    <input type="password" name="confirm" required />
+	  </div>
+	  <input type="submit" name="submit" value="Signup" />
+	  <input type="hidden" id="hidden-email" name="email" value="" />
+	  <input type="hidden" id="hidden-code" name="code" value="" />
+	</form>
+
+	<hr />
+
+	<!-- snippet -->
+	<article>
+	  Landing Page
+	</article>
+
       </div>
       
       <footer>

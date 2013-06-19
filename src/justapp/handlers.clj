@@ -50,26 +50,22 @@
           (assoc :flash "This address is already used.")))))
 
 (html/defsnippet signup-confirm-template
-  "signup_confirm.html" [:form] [email code]
+  "layout.html" [:#signup-confirm] [email code]
   [:#hidden-email] (html/set-attr :value email)
   [:#hidden-code] (html/set-attr :value code))
 
 (defn signup-confirm
   [{params :params}]
   (let [email (:email params)
-        code (:code params)
-        p1 (:password params)
-        p2 (:confirm params)]
-    (if-let [x (mc/find-one-as-map "signup" {:email email})]
-      (if (= code (:code x))
-        (if (and (not (nil? p1)) (= p1 p2))
-          (do (mc/remove "signup" {:email email})
-              (auth/create-user email p1)
-              (-> (redirect "/")
-                  (assoc :flash "Your account has been created.")))
-          (layout (signup-confirm-template email code)))
-        (redirect "/"))
-      (redirect "/"))))
+        code (:code params)]
+    (case (auth/signup-end email code (:password params) (:confirm params))
+      :success (-> (redirect "/")
+                   (assoc :flash "Your account has been created."))
+      :wrong-password (layout (signup-confirm-template email code))
+      :wrong-code (redirect "/")
+      :wrong-email (redirect "/"))))
+
+;; Login
 
 (html/deftemplate login-form-template
   "loginform.html" [])
@@ -104,9 +100,11 @@
                             :lastname (:lastname params)}})
   {:status 204})
 
-(html/defsnippet frontpage-template
-  "frontpage.html" [:article] [])
+;; Landing page
 
-(defn frontpage
+(html/defsnippet landing-page-template
+  "layout.html" [:article] [])
+
+(defn landing-page
   [request]
-  (layout request (frontpage-template)))
+  (layout request (landing-page-template)))

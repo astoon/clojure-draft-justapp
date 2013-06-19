@@ -62,4 +62,13 @@
   (mc/find-one-as-map "signup" {:email email}))
 
 (defn signup-end
-  [email code])
+  [email code password confirm]
+  (if-let [m (mc/find-one-as-map "signup" {:email email})]
+    (if (= code (:code m))
+      (if (and (not (nil? password)) (= password confirm))
+        (do (mc/remove "signup" {:email email})
+            (create-user email password)
+            :success)
+        :wrong-password)
+      :wrong-code)
+    :wrong-email))
