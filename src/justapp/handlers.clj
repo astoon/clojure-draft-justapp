@@ -58,12 +58,11 @@
   [{:keys [params] :as request}]
   (case (auth/signup-end (:email params)
                          (:code params)
-                         (:password params)
-                         (:confirm params))
+                         (:password params))
       :success (assoc (redirect "/") :flash "Your account has been created.")
-      :wrong-password (layout request
-                              (signup-confirm-template (:email params)
-                                                       (:code params)))
+      :no-password (layout request
+                           (signup-confirm-template (:email params)
+                                                    (:code params)))
       :wrong-code (redirect "/")
       :wrong-email (redirect "/")))
 
