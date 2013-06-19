@@ -55,15 +55,17 @@
   [:#hidden-code] (html/set-attr :value code))
 
 (defn signup-confirm
-  [{params :params}]
-  (let [email (:email params)
-        code (:code params)]
-    (case (auth/signup-end email code (:password params) (:confirm params))
-      :success (-> (redirect "/")
-                   (assoc :flash "Your account has been created."))
-      :wrong-password (layout (signup-confirm-template email code))
+  [{:keys [params] :as request}]
+  (case (auth/signup-end (:email params)
+                         (:code params)
+                         (:password params)
+                         (:confirm params))
+      :success (assoc (redirect "/") :flash "Your account has been created.")
+      :wrong-password (layout request
+                              (signup-confirm-template (:email params)
+                                                       (:code params)))
       :wrong-code (redirect "/")
-      :wrong-email (redirect "/"))))
+      :wrong-email (redirect "/")))
 
 ;; Login
 
