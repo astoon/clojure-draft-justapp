@@ -28,6 +28,15 @@
   [:script] (fn [el] (update-in el [:attrs :src] #(str "/" %)))
   [:link] (fn [el] (update-in el [:attrs :href] #(str "/" %))))
 
+;; Landing page
+
+(html/defsnippet landing-page-template
+  "layout.html" [:article] [])
+
+(defn landing-page
+  [request]
+  (layout request (landing-page-template)))
+
 ;; Sign Up
 
 (html/defsnippet signup-form-template
@@ -68,11 +77,12 @@
 
 ;; Login
 
-(html/deftemplate login-form-template
-  "loginform.html" [])
+(html/defsnippet login-form-template
+  "layout.html" [:#login-form] [])
 
-(defn login-form []
-  (apply str (login-form-template)))
+(defn login-form
+  [request]
+  (layout request (login-form-template)))
 
 (defn login-post
   [{params :params session :session}]
@@ -100,12 +110,3 @@
                    {"$set" {:firstname (:firstname params)
                             :lastname (:lastname params)}})
   {:status 204})
-
-;; Landing page
-
-(html/defsnippet landing-page-template
-  "layout.html" [:article] [])
-
-(defn landing-page
-  [request]
-  (layout request (landing-page-template)))

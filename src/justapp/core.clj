@@ -8,6 +8,8 @@
             [compojure.handler :refer [site]]
             [monger.core :refer [connect-via-uri!]]
             [monger.ring.session-store :refer [monger-store]]
+            [cemerick.friend :refer [authenticate]]
+            [cemerick.friend.workflows :refer [interactive-form]]
             [justapp.cfg :refer [config]]
             [justapp.util :as util]
             [justapp.handlers :as handlers]
@@ -20,7 +22,7 @@
   (POST "/signup" request (handlers/signup-post request))
   (ANY "/signup-confirm" request (handlers/signup-confirm request))
 
-  ;(GET "/loginform" [] (handlers/login-form))
+  (GET "/login" request (handlers/login-form request))
   ;(POST "/loginform" request (handlers/login-post request))
   ;(GET "/logout" [] (handlers/logout))
 
@@ -37,7 +39,13 @@
       util/wrap-utf8
       (site {:session {:store (monger-store)
                        :cookie-name "SID"
-                       :cookie-attrs {:expires "Mon, 13-Apr-2020 12:00:00 GMT"}}})))
+                       :cookie-attrs {:expires "Mon, 13-Apr-2020 12:00:00 GMT"}}})
+      (authenticate {:allow-anon? true
+                     :login-uri "/login"
+                     :default-landing-uri "/"
+                     :credential-fn #(auth/authenticate (:username %1)
+                                                        (:password %1))
+                     :workflows [(interactive-form)]})))
 
 (connect-via-uri! (:mongodb-uri config))
 

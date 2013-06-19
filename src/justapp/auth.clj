@@ -25,20 +25,13 @@
   (if-let [u (mc/find-one-as-map "users" {:email email})]
     (map->User u)))
 
-(defn wrap-authentication
-  [handler]
-  (fn [{:keys [session] :as request}]
-    (-> (if-let [user (find-user (:userid session))]
-          (assoc request :user user)
-          request)
-        handler
-        (assoc :session session))))
-
 (defn authenticate
   [email password]
   (if-let [user (find-user email)]
     (when (BCrypt/checkpw password (:password user))
-      user)))
+      {:identity (:email user)
+       :roles (:roles user)
+       :user user})))
 
 (defn user-title
   [user]

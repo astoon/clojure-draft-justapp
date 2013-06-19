@@ -11,6 +11,7 @@
                  [cheshire "5.1.1"]
                  [org.mindrot/jbcrypt "0.3m"]
                  [org.apache.commons/commons-email "1.2"]
+                 [com.cemerick/friend "0.1.5"]
                  [clojure-complete "0.2.2"]]
   :min-lein-version "2.0.0"
   :repositories [["central-proxy" "http://repository.sonatype.org/content/repositories/central/"]]
