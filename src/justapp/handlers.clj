@@ -84,19 +84,12 @@
   [request]
   (layout request (login-form-template)))
 
-(defn login-post
-  [{params :params session :session}]
-  (if-let [userid (auth/authenticate (:email params) (:password params))]
-    (assoc-in (response {:success true}) [:session :userid] userid)
-    (response {:success false})))
-
-(defn logout []
-  (assoc (redirect "/") :session nil))
-
 (html/deftemplate profile-form-template "profile.html"
   [firstname lastname]
   [:#profile-firstname] (html/set-attr :value firstname)
   [:#profile-lastname] (html/set-attr :value lastname))
+
+;; User profile
 
 (defn profile-form
   [{user :user}]

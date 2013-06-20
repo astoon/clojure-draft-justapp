@@ -6,8 +6,10 @@
   (:import org.bson.types.ObjectId
            org.mindrot.jbcrypt.BCrypt))
 
-(defrecord User [email password
-                 firstname lastname
+(defrecord User [email
+                 password
+                 firstname
+                 lastname
                  roles])
 
 (defn create-user
@@ -24,14 +26,6 @@
   [email]
   (if-let [u (mc/find-one-as-map "users" {:email email})]
     (map->User u)))
-
-(defn authenticate
-  [email password]
-  (if-let [user (find-user email)]
-    (when (BCrypt/checkpw password (:password user))
-      {:identity (:email user)
-       :roles (:roles user)
-       :user user})))
 
 (defn user-title
   [user]

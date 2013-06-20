@@ -3,17 +3,19 @@
             [ring.middleware.json :refer [wrap-json-response]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
+            [ring.util.response :refer [redirect]]
             [compojure.core :refer [defroutes ANY GET POST DELETE PUT]]
             [compojure.route :refer [files not-found]]
             [compojure.handler :refer [site]]
             [monger.core :refer [connect-via-uri!]]
             [monger.ring.session-store :refer [monger-store]]
-            [cemerick.friend :refer [authenticate]]
+            [cemerick.friend :refer [authenticate logout*]]
             [cemerick.friend.workflows :refer [interactive-form]]
+            [cemerick.friend.credentials :refer [bcrypt-credential-fn]]
             [justapp.cfg :refer [config]]
             [justapp.util :as util]
             [justapp.handlers :as handlers]
-            [justapp.auth :as auth]))
+            [justapp.auth :refer [find-user]]))
 
 (defroutes routes
   (GET "/" request (handlers/landing-page request))
@@ -23,8 +25,7 @@
   (ANY "/signup-confirm" request (handlers/signup-confirm request))
 
   (GET "/login" request (handlers/login-form request))
-  ;(POST "/loginform" request (handlers/login-post request))
-  ;(GET "/logout" [] (handlers/logout))
+  (GET "/logout" request (logout* (redirect (str (:context request) "/"))))
 
   ;(GET "/profile" request (handlers/profile-form request))
   ;(POST "/profile" request (handlers/profile-post request))
@@ -34,18 +35,13 @@
 
 (def app
   (-> #'routes
-      auth/wrap-authentication
-      wrap-json-response
-      util/wrap-utf8
+      ;wrap-json-response
+      ;util/wrap-utf8
+      (authenticate {:credential-fn (partial bcrypt-credential-fn find-user)
+                     :workflows [(interactive-form)]})
       (site {:session {:store (monger-store)
                        :cookie-name "SID"
-                       :cookie-attrs {:expires "Mon, 13-Apr-2020 12:00:00 GMT"}}})
-      (authenticate {:allow-anon? true
-                     :login-uri "/login"
-                     :default-landing-uri "/"
-                     :credential-fn #(auth/authenticate (:username %1)
-                                                        (:password %1))
-                     :workflows [(interactive-form)]})))
+                       :cookie-attrs {:expires "Mon, 13-Apr-2020 12:00:00 GMT"}}})))
 
 (connect-via-uri! (:mongodb-uri config))
 
