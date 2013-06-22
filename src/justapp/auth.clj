@@ -1,10 +1,10 @@
 (ns justapp.auth
   (:require [monger.collection :as mc]
             [ring.util.response :refer [response]]
+            [com.cemerick.credentials :refer [hash-bcrypt]]
             [justapp.util :as util]
             [justapp.mail :as mail])
-  (:import org.bson.types.ObjectId
-           org.mindrot.jbcrypt.BCrypt))
+  (:import org.bson.types.ObjectId))
 
 (defrecord User [email
                  password
@@ -17,7 +17,7 @@
   (mc/insert "users"
              {:_id (ObjectId.)
               :email email
-              :password (BCrypt/hashpw password (BCrypt/gensalt))
+              :password (hash-bcrypt password)
               :firstname (or firstname "")
               :lastname (or lastname "")
               :roles (or roles #{::member})}))
