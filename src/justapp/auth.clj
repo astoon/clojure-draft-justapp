@@ -1,7 +1,7 @@
 (ns justapp.auth
   (:require [monger.collection :as mc]
             [ring.util.response :refer [response]]
-            [com.cemerick.credentials :refer [hash-bcrypt]]
+            [cemerick.friend.credentials :refer [hash-bcrypt]]
             [justapp.util :as util]
             [justapp.mail :as mail])
   (:import org.bson.types.ObjectId))
