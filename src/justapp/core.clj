@@ -31,14 +31,13 @@
   ;(POST "/profile" request (handlers/profile-post request))
 
   (files "/static" {:root "resources/static"})
-  (not-found (handlers/layout nil "So bad:(")))
+  (not-found (handlers/page nil "So bad:(")))
 
 (def app
   (-> #'routes
       ;wrap-json-response
       ;util/wrap-utf8
-      (authenticate {:credential-fn (partial bcrypt-credential-fn find-user)
-                     :workflows [(interactive-form)]})
+      ;(authenticate {:credential-fn (partial bcrypt-credential-fn find-user) :workflows [(interactive-form)]})
       (site {:session {:store (monger-store)
                        :cookie-name "SID"
                        :cookie-attrs {:expires "Mon, 13-Apr-2020 12:00:00 GMT"}}})))

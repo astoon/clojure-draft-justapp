@@ -1,7 +1,7 @@
 (ns justapp.handlers
   (:require [monger.collection :as mc]
             [net.cgrand.enlive-html :as html]
-            [ring.util.response :refer [response redirect]]
+            [ring.util.response]
             [justapp.auth :as auth]
             [justapp.cfg :refer [config]]))
 
@@ -28,6 +28,20 @@
   [:script] (fn [el] (update-in el [:attrs :src] #(str "/" %)))
   [:link] (fn [el] (update-in el [:attrs :href] #(str "/" %))))
 
+(defn- update-response-after-flash
+  [request response]
+  (if (:session response)
+    response
+    (if (:flash request)
+      (assoc response :session request)
+      response)))
+
+(defn page
+  "Wrap given response's body into layout"
+  [request response]
+  (-> (update-response-after-flash request response)
+      (assoc :body (layout request (:body response)))))
+
 ;; Landing page
 
 (html/defsnippet landing-page-template
@@ -35,7 +49,7 @@
 
 (defn landing-page
   [request]
-  (layout request (landing-page-template)))
+  (page request (landing-page-template)))
 
 ;; Sign Up
 
@@ -44,7 +58,7 @@
 
 (defn signup-form
   [request]
-  (layout request (signup-form-template)))
+  (page request (signup-form-template)))
 
 (defn signup-post
   [request]
@@ -52,10 +66,10 @@
     (if (and (not (auth/find-user email))
              (not (auth/signup-exists? email)))
       (do (auth/signup-start email)
-          (-> (redirect "/")
+          (-> (ring.util.response/redirect "/")
               (assoc :flash "We've sent you a confirmation code!
                            Please check your email.")))
-      (-> (redirect "/signup")
+      (-> (ring.util.response/redirect "/signup")
           (assoc :flash "This address is already used.")))))
 
 (html/defsnippet signup-confirm-template
@@ -68,12 +82,12 @@
   (case (auth/signup-end (:email params)
                          (:code params)
                          (:password params))
-      :success (assoc (redirect "/") :flash "Your account has been created.")
-      :no-password (layout request
-                           (signup-confirm-template (:email params)
-                                                    (:code params)))
-      :wrong-code (redirect "/")
-      :wrong-email (redirect "/")))
+      :success (assoc (ring.util.response/redirect "/") :flash "Your account has been created.")
+      :no-password (page request
+                         (signup-confirm-template (:email params)
+                                                  (:code params)))
+      :wrong-code (ring.util.response/redirect "/")
+      :wrong-email (ring.util.response/redirect "/")))
 
 ;; Login
 
@@ -82,7 +96,7 @@
 
 (defn login-form
   [request]
-  (layout request (login-form-template)))
+  (page request (login-form-template)))
 
 (html/deftemplate profile-form-template "profile.html"
   [firstname lastname]
