@@ -15,9 +15,10 @@
             [justapp.cfg :refer [config]]
             [justapp.util :as util]
             [justapp.handlers :as handlers]
+            [justapp.layout :as layout]
             [justapp.auth :refer [find-user]]))
 
-(defroutes routes
+(defroutes pages
   (GET "/" request (handlers/landing-page request))
 
   (GET "/signup" request (handlers/signup-form request))
@@ -34,7 +35,8 @@
   (not-found (handlers/page nil "So bad:(")))
 
 (def app
-  (-> #'routes
+  (-> #'pages
+      layout/wrap-layout
       ;wrap-json-response
       ;util/wrap-utf8
       ;(authenticate {:credential-fn (partial bcrypt-credential-fn find-user) :workflows [(interactive-form)]})

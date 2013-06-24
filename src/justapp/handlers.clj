@@ -5,43 +5,6 @@
             [justapp.auth :as auth]
             [justapp.cfg :refer [config]]))
 
-;; Layout
-
-(html/defsnippet menu-authenticated
-  "layout.html" [:#menu-authenticated] [user]
-  [:#user-profile] (html/content (auth/user-title user)))
-
-(html/defsnippet menu-anonymous
-  "layout.html" [:#menu-anonymous] [])
-
-(defn- menu
-  [request]
-  (if-let [user (:user request)]
-    (menu-authenticated user)
-    (menu-anonymous)))
-
-(html/deftemplate layout "layout.html"
-  [request content]
-  [:#menu] (html/content (menu request))
-  [:#flash] (html/content (:flash request))
-  [:#main] (html/content content)
-  [:script] (fn [el] (update-in el [:attrs :src] #(str "/" %)))
-  [:link] (fn [el] (update-in el [:attrs :href] #(str "/" %))))
-
-(defn- update-response-after-flash
-  [request response]
-  (if (:session response)
-    response
-    (if (:flash request)
-      (assoc response :session request)
-      response)))
-
-(defn page
-  "Wrap given response's body into layout"
-  [request response]
-  (-> (update-response-after-flash request response)
-      (assoc :body (layout request (:body response)))))
-
 ;; Landing page
 
 (html/defsnippet landing-page-template
