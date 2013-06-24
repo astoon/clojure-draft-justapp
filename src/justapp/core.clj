@@ -19,17 +19,17 @@
             [justapp.auth :refer [find-user]]))
 
 (defroutes pages
-  (GET "/" request (handlers/landing-page request))
+  (GET "/" req (handlers/landing-page req))
 
-  (GET "/signup" request (handlers/signup-form request))
-  (POST "/signup" request (handlers/signup-post request))
-  (ANY "/signup-confirm" request (handlers/signup-confirm request))
+  (GET "/signup" req (handlers/signup-form req))
+  (POST "/signup" req (handlers/signup-post req))
+  (ANY "/signup-confirm" req (handlers/signup-confirm req))
 
-  (GET "/login" request (handlers/login-form request))
-  (GET "/logout" request (logout* (redirect (str (:context request) "/"))))
+  (GET "/login" req (handlers/login-form req))
+  (GET "/logout" req (logout* (redirect (str (:context req) "/"))))
 
-  ;(GET "/profile" request (handlers/profile-form request))
-  ;(POST "/profile" request (handlers/profile-post request))
+  ;(GET "/profile" req (handlers/profile-form req))
+  ;(POST "/profile" req (handlers/profile-post req))
 
   (files "/static" {:root "resources/static"})
   (not-found (handlers/page nil "So bad:(")))

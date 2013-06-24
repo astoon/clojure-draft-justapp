@@ -1,6 +1,6 @@
 (ns justapp.layout
   (:require [net.cgrand.enlive-html :as html]
-            [ring.util.response]
+            [ring.util.response :refer [response]]
             [justapp.auth :as auth]))
 
 (html/defsnippet menu-authenticated
@@ -11,38 +11,39 @@
   "layout.html" [:#menu-anonymous] [])
 
 (defn- menu
-  [request]
-  (if-let [user (:user request)]
+  [req]
+  (if-let [user (:user req)]
     (menu-authenticated user)
     (menu-anonymous)))
 
 (html/deftemplate layout "layout.html"
-  [request content]
-  [:#menu] (html/content (menu request))
-  [:#flash] (html/content (:flash request))
+  [req content]
+  [:#menu] (html/content (menu req))
+  [:#flash] (html/content (:flash req))
   [:#main] (html/content content)
   [:script] (fn [el] (update-in el [:attrs :src] #(str "/" %)))
   [:link] (fn [el] (update-in el [:attrs :href] #(str "/" %))))
 
 (defn- update-response-after-flash
   "Force session value to clean up flash."
-  [request response]
-  (if (:session response)
-    response
-    (if (:flash request)
-      (assoc response :session request)
-      response)))
+  [resp req]
+  (if (:session resp)
+    resp
+    (if (:flash req)
+      (assoc resp :session req)
+      resp)))
 
-(defn treat-response
-  [response]
-  (cond
-   (map? response) response
-   (string? response) (ring.util.response/response response)))
+(defn- treat-response
+  [resp]
+  (if (string? resp)
+    (response resp)
+    resp))
 
 (defn page
-  "Make final response wrapping body into layout.
+  "Make final response with body wrapped into layout.
   If taken response is string, then wrap it into standard ring's
   response map."
-  [request response]
-  (-> (update-response-after-flash request response)
-      (assoc :body (layout request (:body response)))))
+  [req resp]
+  (-> (treat-response resp)
+      (update-response-after-flash req)
+      (assoc :body (layout req (:body resp)))))
