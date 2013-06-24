@@ -15,34 +15,35 @@
             [justapp.cfg :refer [config]]
             [justapp.util :as util]
             [justapp.handlers :as handlers]
-            [justapp.layout :as layout]
+            [justapp.layout :refer [wrap-layout page]]
             [justapp.auth :refer [find-user]]))
 
-(defroutes pages
+(defroutes pages*
   (GET "/" req (handlers/landing-page req))
-
   (GET "/signup" req (handlers/signup-form req))
   (POST "/signup" req (handlers/signup-post req))
   (ANY "/signup-confirm" req (handlers/signup-confirm req))
-
   (GET "/login" req (handlers/login-form req))
   (GET "/logout" req (logout* (redirect (str (:context req) "/"))))
-
   ;(GET "/profile" req (handlers/profile-form req))
   ;(POST "/profile" req (handlers/profile-post req))
+  (not-found (page nil "Not found")))
 
-  (files "/static" {:root "resources/static"})
-  (not-found (handlers/page nil "So bad:(")))
-
-(def app
-  (-> #'pages
-      layout/wrap-layout
+(def pages
+  (-> #'pages*
+      ;wrap-layout
       ;wrap-json-response
       ;util/wrap-utf8
       ;(authenticate {:credential-fn (partial bcrypt-credential-fn find-user) :workflows [(interactive-form)]})
       (site {:session {:store (monger-store)
                        :cookie-name "SID"
                        :cookie-attrs {:expires "Mon, 13-Apr-2020 12:00:00 GMT"}}})))
+(defroutes static
+  (files "/static" {:root "resources/static"}))
+
+(def app
+  (-> pages
+      static))
 
 (connect-via-uri! (:mongodb-uri config))
 

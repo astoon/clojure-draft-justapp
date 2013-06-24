@@ -47,3 +47,7 @@
   (-> (treat-response resp)
       (update-response-after-flash req)
       (assoc :body (layout req (:body resp)))))
+
+(defn wrap-layout
+  [handler]
+  (fn [req] (handler req)))
