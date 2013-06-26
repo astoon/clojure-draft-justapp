@@ -1,6 +1,6 @@
 (ns justapp.layout
   (:require [net.cgrand.enlive-html :as html]
-            [ring.util.response :refer [response]]
+            [ring.util.response :refer [response response?]]
             [justapp.auth :as auth]))
 
 (html/defsnippet menu-authenticated
@@ -16,7 +16,7 @@
     (menu-authenticated user)
     (menu-anonymous)))
 
-(html/deftemplate layout "layout.html"
+(html/deftemplate layout* "layout.html"
   [req content]
   [:#menu] (html/content (menu req))
   [:#flash] (html/content (:flash req))
@@ -33,21 +33,28 @@
       (assoc resp :session req)
       resp)))
 
-(defn- treat-response
+(defn treat-response
   [resp]
-  (if (string? resp)
-    (response resp)
-    resp))
+  (cond
+   (response? resp) resp
+   (string? resp) (response resp)
+   :else nil))
 
-(defn page
+(defn layout
   "Make final response with body wrapped into layout.
-  If taken response is string, then wrap it into standard ring's
-  response map."
+  Takes request and response arguments.
+  Response argument can be one of:
+  - string,
+  - ring response map,
+  - sequence produced by cgrand/enlive's html-snippet.
+  "
   [req resp]
   (-> (treat-response resp)
       (update-response-after-flash req)
-      (assoc :body (layout req (:body resp)))))
+      (assoc :body (layout* req (:body resp)))))
 
 (defn wrap-layout
+  "Wrap responses into layout."
   [handler]
-  (fn [req] (handler req)))
+  (fn [req]
+    (layout req (handler req))))

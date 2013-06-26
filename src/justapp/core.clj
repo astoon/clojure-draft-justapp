@@ -15,10 +15,9 @@
             [justapp.cfg :refer [config]]
             [justapp.util :as util]
             [justapp.handlers :as handlers]
-            [justapp.layout :refer [wrap-layout page]]
             [justapp.auth :refer [find-user]]))
 
-(defroutes pages*
+(defroutes app*
   (GET "/" req (handlers/landing-page req))
   (GET "/signup" req (handlers/signup-form req))
   (POST "/signup" req (handlers/signup-post req))
@@ -27,10 +26,11 @@
   (GET "/logout" req (logout* (redirect (str (:context req) "/"))))
   ;(GET "/profile" req (handlers/profile-form req))
   ;(POST "/profile" req (handlers/profile-post req))
-  (not-found (page nil "Not found")))
+  (files "/static" {:root "resources/static"})
+  (not-found "Not found"))
 
-(def pages
-  (-> #'pages*
+(def app
+  (-> #'app*
       ;wrap-layout
       ;wrap-json-response
       ;util/wrap-utf8
@@ -38,12 +38,6 @@
       (site {:session {:store (monger-store)
                        :cookie-name "SID"
                        :cookie-attrs {:expires "Mon, 13-Apr-2020 12:00:00 GMT"}}})))
-(defroutes static
-  (files "/static" {:root "resources/static"}))
-
-(def app
-  (-> pages
-      static))
 
 (connect-via-uri! (:mongodb-uri config))
 

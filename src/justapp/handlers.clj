@@ -4,7 +4,7 @@
             [ring.util.response :refer [redirect]]
             [justapp.auth :as auth]
             [justapp.cfg :refer [config]]
-            [justapp.layout :refer [page]]))
+            [justapp.layout :refer [layout]]))
 
 ;; Landing page
 
@@ -13,7 +13,7 @@
 
 (defn landing-page
   [req]
-  (page req (landing-page-template)))
+  (layout req (landing-page-template)))
 
 ;; Sign Up
 
@@ -22,7 +22,7 @@
 
 (defn signup-form
   [req]
-  (page req (signup-form-template)))
+  (layout req (signup-form-template)))
 
 (defn signup-post
   [req]
@@ -47,9 +47,9 @@
                          (:code params)
                          (:password params))
       :success (assoc (redirect "/") :flash "Your account has been created.")
-      :no-password (page req
-                         (signup-confirm-template (:email params)
-                                                  (:code params)))
+      :no-password (layout req
+                           (signup-confirm-template (:email params)
+                                                    (:code params)))
       :wrong-code (redirect "/")
       :wrong-email (redirect "/")))
 
@@ -60,7 +60,7 @@
 
 (defn login-form
   [req]
-  (page req (login-form-template)))
+  (layout req (login-form-template)))
 
 (html/deftemplate profile-form-template "profile.html"
   [firstname lastname]

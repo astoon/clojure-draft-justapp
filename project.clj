@@ -25,4 +25,5 @@
         :justapp-smtp-addrfrom "xxx@xxx.com"
         :justapp-smtp-namefrom "XXX"
         :justapp-smtp-username "xxx"
-        :justapp-smtp-password "xxx"})
+        :justapp-smtp-password "xxx"}
+  :profiles {:dev {:dependencies [[ring-mock "0.1.5"]]}})
