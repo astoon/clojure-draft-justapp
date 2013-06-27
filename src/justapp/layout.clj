@@ -42,10 +42,12 @@
 
 (defn layout
   [req resp]
-  (-> resp
-      (layout-include req)
-      (render req)
-      (update-response-after-flash req)))
+  (if (= false (:layout resp))
+    resp
+    (-> resp
+        (layout-include req)
+        (render req)
+        (update-response-after-flash req))))
 
 (defn wrap-layout
   [handler]
