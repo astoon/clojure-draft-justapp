@@ -15,24 +15,25 @@
             [justapp.cfg :refer [config]]
             [justapp.util :as util]
             [justapp.handlers :as handlers]
-            [justapp.layout :refer [layout wrap-layout]]
+            [justapp.layout :refer [wrap-layout]]
             [justapp.auth :refer [find-user]]))
 
 (defroutes app*
-  (GET "/" req (handlers/landing-page req))
-  (GET "/signup" req (handlers/signup-form req))
-  (POST "/signup" req (handlers/signup-post req))
-  (ANY "/signup-confirm" req (handlers/signup-confirm req))
-  (GET "/login" req (handlers/login-form req))
+  (GET "/" _ (handlers/landing-page))
+  (GET "/signup" _ (handlers/signup-form))
+  (POST "/signup" [email] (handlers/signup-post email))
+  (ANY "/signup-confirm" [email code password]
+       (handlers/signup-confirm email code password))
+  (GET "/login" _ (handlers/login-form))
   (GET "/logout" req (logout* (redirect (str (:context req) "/"))))
   ;(GET "/profile" req (handlers/profile-form req))
   ;(POST "/profile" req (handlers/profile-post req))
   (files "/static" {:root "resources/static"})
-  (not-found (layout nil "Not found")))
+  (not-found "<h1>Not Found</h1>"))
 
 (def app
   (-> #'app*
-      ;wrap-layout
+      wrap-layout
       ;wrap-json-response
       ;util/wrap-utf8
       ;(authenticate {:credential-fn (partial bcrypt-credential-fn find-user) :workflows [(interactive-form)]})
