@@ -26,4 +26,5 @@
         :justapp-smtp-namefrom "XXX"
         :justapp-smtp-username "xxx"
         :justapp-smtp-password "xxx"}
-  :profiles {:dev {:dependencies [[ring-mock "0.1.5"]]}})
+  :profiles {:dev {:dependencies [[kerodon "0.1.0"]
+                                  [ring-mock "0.1.5"]]}})

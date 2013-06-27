@@ -28,7 +28,7 @@
   ;(GET "/profile" req (handlers/profile-form req))
   ;(POST "/profile" req (handlers/profile-post req))
   (files "/static" {:root "resources/static"})
-  (not-found "Not found"))
+  (not-found (layout nil "Not found")))
 
 (def app
   (-> #'app*
