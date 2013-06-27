@@ -1,6 +1,7 @@
 (ns justapp.layout
   (:require [net.cgrand.enlive-html :as html]
-            [ring.util.response :refer [response response?]]
+            [ring.util.response :refer [response?]]
+            [compojure.response :refer [render]]
             [justapp.auth :as auth]))
 
 (html/defsnippet menu-authenticated
@@ -16,7 +17,7 @@
     (menu-authenticated user)
     (menu-anonymous)))
 
-(html/deftemplate layout* "layout.html"
+(html/deftemplate layout-template "layout.html"
   [req main]
   [:#menu] (html/content (menu req))
   [:#flash] (html/content (:flash req))
@@ -25,19 +26,26 @@
   [:link] (fn [el] (update-in el [:attrs :href] #(str "/" %))))
 
 (defn- update-response-after-flash
-  "Force session value to clean up flash."
+  "Force setting session to clean up flash."
   [resp req]
   (if (:session resp)
     resp
     (if (:flash req)
-      (assoc resp :session req)
+      (assoc resp :session (:session req))
       resp)))
+
+(defn- layout-include
+  [resp req]
+  (if (response? resp)
+    (assoc resp :body (layout-template req (:body resp)))
+    (layout-template req resp)))
 
 (defn layout
   [req resp]
-  (if (response? resp)
-    (assoc resp :body (layout* req (:body resp)))
-    (layout* req resp)))
+  (-> resp
+      (layout-include req)
+      (render req)
+      (update-response-after-flash req)))
 
 (defn wrap-layout
   [handler]
