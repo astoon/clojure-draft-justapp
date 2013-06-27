@@ -13,10 +13,10 @@
             [cemerick.friend.workflows :refer [interactive-form]]
             [cemerick.friend.credentials :refer [bcrypt-credential-fn]]
             [justapp.cfg :refer [config]]
-            [justapp.util :as util]
-            [justapp.handlers :as handlers]
+            [justapp.util :refer [wrap-utf8]]
             [justapp.layout :refer [wrap-layout]]
-            [justapp.auth :refer [find-user]]))
+            [justapp.auth :refer [find-user]]
+            [justapp.handlers :as handlers]))
 
 (defroutes app*
   (GET "/" _ (handlers/landing-page))
@@ -34,9 +34,10 @@
 (def app
   (-> #'app*
       wrap-layout
-      ;wrap-json-response
-      ;util/wrap-utf8
-      ;(authenticate {:credential-fn (partial bcrypt-credential-fn find-user) :workflows [(interactive-form)]})
+      wrap-json-response
+      wrap-utf8
+      (authenticate {:credential-fn (partial bcrypt-credential-fn find-user)
+                     :workflows [(interactive-form)]})
       (site {:session {:store (monger-store)
                        :cookie-name "SID"
                        :cookie-attrs {:expires "Mon, 13-Apr-2020 12:00:00 GMT"}}})))

@@ -6,12 +6,6 @@
             [justapp.mail :as mail])
   (:import org.bson.types.ObjectId))
 
-(defrecord User [email
-                 password
-                 firstname
-                 lastname
-                 roles])
-
 (defn create-user
   [email password & {:keys [firstname lastname roles]}]
   (mc/insert "users"
@@ -24,8 +18,8 @@
 
 (defn find-user
   [email]
-  (if-let [u (mc/find-one-as-map "users" {:email email})]
-    (map->User u)))
+  (if-let [user (mc/find-one-as-map "users" {:email email})]
+    (assoc user :username (.toString (:_id user)))))
 
 (defn user-title
   [user]

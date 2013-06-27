@@ -44,12 +44,12 @@
 (html/defsnippet login-form
   "layout.html" [:#login-form] [])
 
+;; User profile
+
 (html/deftemplate profile-form-template "profile.html"
   [firstname lastname]
   [:#profile-firstname] (html/set-attr :value firstname)
   [:#profile-lastname] (html/set-attr :value lastname))
-
-;; User profile
 
 (defn profile-form
   [{user :user}]
