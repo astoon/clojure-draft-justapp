@@ -15,6 +15,7 @@
             [justapp.cfg :refer [config]]
             [justapp.util :as util]
             [justapp.handlers :as handlers]
+            [justapp.layout :refer [layout wrap-layout]]
             [justapp.auth :refer [find-user]]))
 
 (defroutes app*

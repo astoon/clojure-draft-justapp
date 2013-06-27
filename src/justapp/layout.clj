@@ -35,10 +35,9 @@
 
 (defn treat-response
   [resp]
-  (cond
-   (response? resp) resp
-   (string? resp) (response resp)
-   :else nil))
+  (if (response? resp)
+    resp
+    (response resp)))
 
 (defn layout
   "Make final response with body wrapped into layout.
@@ -49,8 +48,9 @@
   - sequence produced by cgrand/enlive's html-snippet.
   "
   [req resp]
-  (-> (treat-response resp)
-      (update-response-after-flash req)
+  (-> resp
+      ;(treat-response resp)
+      ;(update-response-after-flash req)
       (assoc :body (layout* req (:body resp)))))
 
 (defn wrap-layout
