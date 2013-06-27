@@ -17,10 +17,10 @@
     (menu-anonymous)))
 
 (html/deftemplate layout* "layout.html"
-  [req content]
+  [req main]
   [:#menu] (html/content (menu req))
   [:#flash] (html/content (:flash req))
-  [:#main] (html/content content)
+  [:#main] (html/content (if (string? main) (html/html-snippet main) main))
   [:script] (fn [el] (update-in el [:attrs :src] #(str "/" %)))
   [:link] (fn [el] (update-in el [:attrs :href] #(str "/" %))))
 
@@ -33,28 +33,13 @@
       (assoc resp :session req)
       resp)))
 
-(defn treat-response
-  [resp]
-  (if (response? resp)
-    resp
-    (response resp)))
-
 (defn layout
-  "Make final response with body wrapped into layout.
-  Takes request and response arguments.
-  Response argument can be one of:
-  - string,
-  - ring response map,
-  - sequence produced by cgrand/enlive's html-snippet.
-  "
   [req resp]
-  (-> resp
-      ;(treat-response resp)
-      ;(update-response-after-flash req)
-      (assoc :body (layout* req (:body resp)))))
+  (if (response? resp)
+    (assoc resp :body (layout* req (:body resp)))
+    (layout* req resp)))
 
 (defn wrap-layout
-  "Wrap responses into layout."
   [handler]
   (fn [req]
     (layout req (handler req))))
