@@ -6,6 +6,12 @@
             [justapp.mail :as mail])
   (:import org.bson.types.ObjectId))
 
+(defn authenticated-user
+  "Hack cemerick/friend"
+  [req]
+  (let [idt (-> req :session :identity)]
+    (get (:authentications idt) (keyword (:current idt)))))
+
 (defn create-user
   [email password & {:keys [firstname lastname roles]}]
   (mc/insert "users"
@@ -14,7 +20,7 @@
               :password (hash-bcrypt password)
               :firstname (or firstname "")
               :lastname (or lastname "")
-              :roles (or roles #{::member})}))
+              :roles (or roles #{::user})}))
 
 (defn find-user
   [email]

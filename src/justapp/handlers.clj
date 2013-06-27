@@ -42,7 +42,8 @@
 ;; Login
 
 (html/defsnippet login-form
-  "layout.html" [:#login-form] [])
+  "layout.html" [:#login-form] [req]
+  [[:input (html/attr= :name "username")]] (html/set-attr :value (:username (:params req))))
 
 ;; User profile
 

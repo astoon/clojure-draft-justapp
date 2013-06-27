@@ -1,5 +1,6 @@
 (ns justapp.layout
   (:require [net.cgrand.enlive-html :as html]
+            [cemerick.friend]
             [ring.util.response :refer [response?]]
             [compojure.response :refer [render]]
             [justapp.auth :as auth]))
@@ -13,7 +14,7 @@
 
 (defn- menu
   [req]
-  (if-let [user (:user req)]
+  (if-let [user (auth/authenticated-user req)]
     (menu-authenticated user)
     (menu-anonymous)))
 
