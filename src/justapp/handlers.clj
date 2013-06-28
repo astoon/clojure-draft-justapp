@@ -1,9 +1,8 @@
 (ns justapp.handlers
-  (:require [monger.collection :as mc]
-            [net.cgrand.enlive-html :as html]
+  (:require [net.cgrand.enlive-html :as html]
+            [cemerick.friend :refer [current-authentication]]
             [ring.util.response :refer [redirect]]
-            [justapp.auth :as auth]
-            [justapp.cfg :refer [config]]))
+            [justapp.auth :as auth]))
 
 ;; Landing page
 
@@ -47,20 +46,19 @@
 
 ;; User profile
 
-(html/deftemplate profile-form-template "profile.html"
-  [firstname lastname]
+(html/defsnippet profile-form-template
+  "layout.html" [:#profile-form] [firstname lastname]
   [:#profile-firstname] (html/set-attr :value firstname)
   [:#profile-lastname] (html/set-attr :value lastname))
 
 (defn profile-form
-  [{user :user}]
-  (apply str (profile-form-template (:firstname user)
-                                    (:lastname user))))
+  [req]
+  (let [user (current-authentication req)]
+    (profile-form-template (:firstname user) (:lastname user))))
 
 (defn profile-post
-  [{params :params user :user}]
-  (mc/update-by-id "users"
-                   (:_id user)
-                   {"$set" {:firstname (:firstname params)
-                            :lastname (:lastname params)}})
-  {:status 204})
+  [{:keys [params] :as req}]
+  (auth/update-user-profile (:_id (current-authentication req))
+                            (or (:firstname params) "")
+                            (or (:lastname params) ""))
+  (redirect "/"))

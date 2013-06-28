@@ -3,6 +3,7 @@
             [cemerick.friend]
             [ring.util.response :refer [response?]]
             [compojure.response :refer [render]]
+            [cemerick.friend :refer [current-authentication]]
             [justapp.auth :as auth]))
 
 (html/defsnippet menu-authenticated
@@ -14,7 +15,7 @@
 
 (defn- menu
   [req]
-  (if-let [user (auth/authenticated-user req)]
+  (if-let [user (current-authentication req)]
     (menu-authenticated user)
     (menu-anonymous)))
 

@@ -6,12 +6,6 @@
             [justapp.mail :as mail])
   (:import org.bson.types.ObjectId))
 
-(defn authenticated-user
-  "Hack cemerick/friend"
-  [req]
-  (let [idt (-> req :session :identity)]
-    (get (:authentications idt) (keyword (:current idt)))))
-
 (defn create-user
   [email password & {:keys [firstname lastname roles]}]
   (mc/insert "users"
@@ -59,3 +53,8 @@
         :no-password)
       :wrong-code)
     :wrong-email))
+
+(defn update-user-profile
+  [id firstname lastname]
+  (mc/update-by-id "users" id {"$set" {:firstname firstname
+                                       :lastname lastname}}))

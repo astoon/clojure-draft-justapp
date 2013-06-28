@@ -8,7 +8,7 @@
             [compojure.route :refer [files not-found]]
             [compojure.handler :refer [site]]
             [monger.core :refer [connect-via-uri!]]
-            [monger.ring.session-store :refer [monger-store]]
+            [monger.ring.session-store :refer [session-store]]
             [cemerick.friend :refer [authenticate logout*]]
             [cemerick.friend.workflows :refer [interactive-form]]
             [cemerick.friend.credentials :refer [bcrypt-credential-fn]]
@@ -26,8 +26,8 @@
        (handlers/signup-confirm email code password))
   (GET "/login" req (handlers/login-form req))
   (GET "/logout" req (logout* (redirect (str (:context req) "/"))))
-  ;(GET "/profile" req (handlers/profile-form req))
-  ;(POST "/profile" req (handlers/profile-post req))
+  (GET "/profile" req (handlers/profile-form req))
+  (POST "/profile" req (handlers/profile-post req))
   (files "/static" {:root "resources/static"})
   (not-found "<h1>Not Found</h1>"))
 
@@ -38,7 +38,7 @@
       wrap-utf8
       (authenticate {:credential-fn (partial bcrypt-credential-fn find-user)
                      :workflows [(interactive-form)]})
-      (site {:session {:store (monger-store)
+      (site {:session {:store (session-store)
                        :cookie-name "SID"
                        :cookie-attrs {:expires "Mon, 13-Apr-2020 12:00:00 GMT"}}})))
 
