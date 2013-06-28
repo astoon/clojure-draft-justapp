@@ -1,6 +1,6 @@
 (ns justapp.handlers
   (:require [net.cgrand.enlive-html :as html]
-            [cemerick.friend :refer [current-authentication]]
+            [cemerick.friend :as friend]
             [ring.util.response :refer [redirect]]
             [justapp.auth :as auth]))
 
@@ -53,12 +53,18 @@
 
 (defn profile-form
   [req]
-  (let [user (current-authentication req)]
+  (let [user (friend/current-authentication req)]
     (profile-form-template (:firstname user) (:lastname user))))
 
 (defn profile-post
   [{:keys [params] :as req}]
-  (auth/update-user-profile (:_id (current-authentication req))
-                            (or (:firstname params) "")
-                            (or (:lastname params) ""))
-  (redirect "/"))
+  (let [firstname (or (:firstname params) "")
+        lastname (or (:lastname params) "")
+        user (friend/current-authentication req)]
+    (auth/update-user-profile (:_id user) firstname lastname)
+
+    ; update user info in session
+    (let [user (assoc user :firstname firstname :lastname lastname)
+          session (:session (friend/merge-authentication req user))]
+      (-> (redirect "/")
+          (assoc :session session)))))
