@@ -48,8 +48,8 @@
 
 (html/defsnippet profile-form-template
   "layout.html" [:#profile-form] [firstname lastname]
-  [:#profile-firstname] (html/set-attr :value firstname)
-  [:#profile-lastname] (html/set-attr :value lastname))
+  [[:input (html/attr= :name "firstname")]] (html/set-attr :value firstname)
+  [[:input (html/attr= :name "lastname")]] (html/set-attr :value lastname))
 
 (defn profile-form
   [req]
