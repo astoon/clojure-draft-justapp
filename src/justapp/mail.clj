@@ -1,21 +1,21 @@
 (ns justapp.mail
   (:require [net.cgrand.enlive-html :as html]
-            [justapp.cfg :refer [config]])
-  (:import org.apache.commons.mail.HtmlEmail))
+            [postal.core :refer [send-message]]
+            [justapp.cfg :refer [config]]))
 
 (defn sendmail
   [address subject content]
   (future
-    (doto (HtmlEmail.)
-    (.setHostName "smtp.gmail.com")
-    (.setSmtpPort 587)
-    (.setTLS true)
-    (.addTo address)
-    (.setFrom (:smtp-addrfrom config) (:smtp-namefrom config))
-    (.setSubject subject)
-    (.setHtmlMsg content)
-    (.setAuthentication (:smtp-username config) (:smtp-password config))
-    (.send))))
+    (send-message ^{:host "smtp.gmail.com"
+                    :port 587
+                    :user (:smtp-username config)
+                    :pass (:smtp-password config)
+                    :tls true}
+                  {:from (:smtp-addrfrom config)
+                   :to address
+                   :subject subject
+                   :body [{:type "text/html"
+                           :content content}]})))
 
 (defn- signup-confirm-link [addr code]
   (str (:root-url config) "/signup-confirm?email=" addr "&code=" code))
