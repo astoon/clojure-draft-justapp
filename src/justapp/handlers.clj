@@ -2,6 +2,7 @@
   (:require [net.cgrand.enlive-html :as html]
             [cemerick.friend :as friend]
             [ring.util.response :refer [redirect]]
+            [monger.collection :as mc]
             [justapp.auth :as auth]))
 
 ;; Landing page
@@ -61,7 +62,11 @@
   (let [firstname (or (:firstname params) "")
         lastname (or (:lastname params) "")
         user (friend/current-authentication req)]
-    (auth/update-user-profile (:_id user) firstname lastname)
+
+    (mc/update-by-id "users"
+                     (:_id user)
+                     {"$set" {:firstname firstname
+                              :lastname lastname}})
 
     ; update user info in session
     (let [user (assoc user :firstname firstname :lastname lastname)

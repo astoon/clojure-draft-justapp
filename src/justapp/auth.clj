@@ -53,8 +53,3 @@
         :no-password)
       :wrong-code)
     :wrong-email))
-
-(defn update-user-profile
-  [id firstname lastname]
-  (mc/update-by-id "users" id {"$set" {:firstname firstname
-                                       :lastname lastname}}))
