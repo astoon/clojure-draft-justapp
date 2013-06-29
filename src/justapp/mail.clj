@@ -5,7 +5,8 @@
 
 (defn sendmail
   [address subject content]
-  (doto (HtmlEmail.)
+  (future
+    (doto (HtmlEmail.)
     (.setHostName "smtp.gmail.com")
     (.setSmtpPort 587)
     (.setTLS true)
@@ -14,7 +15,7 @@
     (.setSubject subject)
     (.setHtmlMsg content)
     (.setAuthentication (:smtp-username config) (:smtp-password config))
-    (.send)))
+    (.send))))
 
 (defn- signup-confirm-link [addr code]
   (str (:root-url config) "/signup-confirm?email=" addr "&code=" code))
