@@ -22,8 +22,7 @@
   (GET "/" _ (handlers/landing-page))
   (GET "/signup" _ (handlers/signup-form))
   (POST "/signup" [email] (handlers/signup-post email))
-  (ANY "/signup-confirm" [email code password]
-       (handlers/signup-confirm email code password))
+  (ANY "/signup-confirm" [email code password] (handlers/signup-confirm email code password))
   (GET "/login" req (handlers/login-form req))
   (GET "/logout" req (logout* (redirect (str (:context req) "/"))))
   (GET "/profile" req (handlers/profile-form req))
