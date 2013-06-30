@@ -14,7 +14,7 @@
             [cemerick.friend.credentials :refer [bcrypt-credential-fn]]
             [justapp.cfg :refer [config]]
             [justapp.util :refer [wrap-utf8]]
-            [justapp.layout :refer [wrap-layout]]
+            [justapp.layout :refer [wrap-layout no-layout]]
             [justapp.auth :refer [find-user]]
             [justapp.handlers :as handlers]))
 
@@ -27,7 +27,7 @@
   (GET "/logout" req (logout* (redirect (str (:context req) "/"))))
   (GET "/profile" req (handlers/profile-form req))
   (POST "/profile" req (handlers/profile-post req))
-  (files "/static" {:root "resources/static"})
+  (no-layout (files "/static" {:root "resources/static"}))
   (not-found "<h1>Not Found</h1>"))
 
 (def app

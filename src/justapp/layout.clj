@@ -55,3 +55,8 @@
   [handler]
   (fn [req]
     (layout req (handler req))))
+
+(defn no-layout
+  [handler]
+  (fn [req]
+    (assoc (handler req) :layout false)))

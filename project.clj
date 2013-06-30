@@ -17,7 +17,12 @@
   :min-lein-version "2.0.0"
   :repositories [["central-proxy" "http://repository.sonatype.org/content/repositories/central/"]]
   :plugins [[lein-ring "0.8.5"]
-            [lein-environ "0.4.0"]]
+            [lein-environ "0.4.0"]
+            [lein-cljsbuild "0.3.2"]]
+  :hooks [leiningen.cljsbuild]
+  :cljsbuild {:builds [{:compiler {:output-to "resources/static/js/main.js"
+                                   :optimizations :advanced
+                                   :pretty-print false}}]}
   :ring {:handler justapp.core/app
          :port 7777
          :nrepl {:start? true :port 77777}}
