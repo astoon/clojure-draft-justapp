@@ -20,7 +20,8 @@
             [lein-environ "0.4.0"]
             [lein-cljsbuild "0.3.2"]]
   :hooks [leiningen.cljsbuild]
-  :cljsbuild {:builds [{:compiler {:output-to "resources/static/js/main.js"
+  :cljsbuild {:builds [{:source-paths ["cljs"]
+                        :compiler {:output-to "resources/static/js/main.js"
                                    :optimizations :advanced
                                    :pretty-print false}}]}
   :ring {:handler justapp.core/app
