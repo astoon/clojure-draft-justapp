@@ -1,10 +1,11 @@
 (ns justapp.core
-  (:require [clojure.browser.repl]))
+  (:require [clojure.browser.repl :as repl]))
 
-(clojure.browser.repl/connect "http://localhost:9000")
+(repl/connect "http://localhost:9000/repl")
 
 (defn futurama
   [value]
-  (js/alert value))
+  (js/alert value)
+  (js/alert "So, I'm done..."))
 
-(futurama value)
+(futurama "Welcome!")

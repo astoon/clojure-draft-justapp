@@ -13,7 +13,8 @@
                  [org.apache.commons/commons-email "1.2"]
                  [com.cemerick/friend "0.1.5"]
                  [clojure-complete "0.2.2"]
-                 [com.draines/postal "1.10.4"]]
+                 [com.draines/postal "1.10.4"]
+                 [com.cemerick/piggieback "0.0.5"]]
   :min-lein-version "2.0.0"
   :repositories [["central-proxy" "http://repository.sonatype.org/content/repositories/central/"]]
   :plugins [[lein-ring "0.8.5"]
@@ -22,8 +23,9 @@
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds [{:source-paths ["cljs"]
                         :compiler {:output-to "resources/static/js/main.js"
-                                   :optimizations :advanced
-                                   :pretty-print false}}]}
+                                   :optimizations :whitespace
+                                   :pretty-print true}}]}
+  :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
   :ring {:handler justapp.core/app
          :port 7777
          :nrepl {:start? true :port 77777}}
