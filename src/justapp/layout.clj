@@ -1,6 +1,6 @@
 (ns justapp.layout
   (:require [net.cgrand.enlive-html :as html]
-            [cemerick.friend]
+            cemerick.friend
             [ring.util.response :refer [response?]]
             [compojure.response :refer [render]]
             [cemerick.friend :refer [current-authentication]]
