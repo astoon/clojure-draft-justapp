@@ -1,4 +1,7 @@
 (defproject justapp "0.1.0-SNAPSHOT"
+  :url "https://github.com/ilshad/clojure-draft-justapp"
+  :license {:name "Eclipse Public License"
+            :url "http://www.eclipse.org/legal/epl-v10.html"}
   :description "justapp"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [environ "0.4.0"]
