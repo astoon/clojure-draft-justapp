@@ -17,7 +17,7 @@
     (menu-anonymous)))
 
 (html/deftemplate layout-template "layout.html"
-  [req content]
+  [req content params]
   [:#menu] (html/content (menu req))
   [:#flash] (html/content (:flash req))
   [:#main] (html/content content)

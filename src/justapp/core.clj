@@ -34,6 +34,7 @@
 (def app
   (-> #'app*
       (wrap-layout layout-template)
+      ;(wrap-layout {:default layout-template})
       wrap-json-response
       wrap-utf8
       (authenticate {:credential-fn (partial bcrypt-credential-fn find-user)
