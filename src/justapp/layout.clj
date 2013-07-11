@@ -20,6 +20,8 @@
   [req content params]
   [:#menu] (html/content (menu req))
   [:#flash] (html/content (:flash req))
-  [:#main] (html/content content)
+  [:#main] (if (string? content)
+             (html/html-content content)
+             (html/content content))
   [:script] (fn [el] (update-in el [:attrs :src] #(str "/" %)))
   [:link] (fn [el] (update-in el [:attrs :href] #(str "/" %))))

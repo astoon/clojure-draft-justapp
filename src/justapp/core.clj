@@ -12,7 +12,7 @@
             [cemerick.friend :refer [authenticate logout*]]
             [cemerick.friend.workflows :refer [interactive-form]]
             [cemerick.friend.credentials :refer [bcrypt-credential-fn]]
-            [ilshad.layout :refer [wrap-layout prevent-layout]]
+            [ilshad.layout :refer [wrap-layout]]
             [justapp.layout :refer [layout-template]]
             [justapp.cfg :refer [config]]
             [justapp.util :refer [wrap-utf8]]
@@ -28,15 +28,14 @@
   (GET "/logout" req (logout* (redirect (str (:context req) "/"))))
   (GET "/profile" req (handlers/profile-form req))
   (POST "/profile" req (handlers/profile-post req))
-  (prevent-layout (files "/static" {:root "resources/static"}))
+  (files "/static" {:root "resources/static"})
   (not-found "<h1>Not Found</h1>"))
 
 (def app
   (-> #'app*
-      (wrap-layout layout-template)
-      ;(wrap-layout {:default layout-template})
-      wrap-json-response
-      wrap-utf8
+      (wrap-layout {:prevent [#"^/static"]
+                    :templates {:default layout-template}})
+       wrap-utf8
       (authenticate {:credential-fn (partial bcrypt-credential-fn find-user)
                      :workflows [(interactive-form)]})
       (site {:session {:store (session-store)
