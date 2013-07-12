@@ -31,7 +31,7 @@
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
   :ring {:handler justapp.core/app
          :port 7777
-         :nrepl {:start? true :port 12345}}
+         :nrepl {:start? true :port 9991}}
   :env {:env-root-url "http://localhost:7777"
         :env-mongodb-uri "mongodb://localhost/justapp"
         :justapp-smtp-addrfrom "xxx@xxx.com"
